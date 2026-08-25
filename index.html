@@ -151,7 +151,7 @@ async function refreshData(){
     const rows=await response.json();
 
     if(!rows.length){
-      throw new Error("VMC-01 record not found");
+      throw new Error("DISA MOULD COUNT record not found");
     }
 
     const d=rows[0];
