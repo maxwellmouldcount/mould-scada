@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#061016">
+<title>MOULD COUNTER SCADA</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#03080b;color:#eaf2f5;font-family:Arial,sans-serif}
+.header{padding:14px 10px;text-align:center;background:#061016;border-bottom:2px solid #19c9ef}
+.title{font-size:clamp(20px,6vw,30px);font-weight:800;color:#21d8ff}
+.sub{font-size:11px;color:#8ea1aa;margin-top:4px}
+.page{max-width:900px;margin:auto;padding:10px}
+.status{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}
+.badge,.card{background:#071116;border:1px solid #2b3a42;border-radius:8px}
+.badge{padding:9px 4px;text-align:center;font-size:12px;font-weight:bold}
+.green{color:#00ff4c}.red{color:#ff4141}.yellow{color:#ffe94a}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.card{padding:12px}
+.full{grid-column:1/-1}
+.card h3{text-align:center;font-size:13px;color:#21d8ff;margin:0 0 9px}
+.big{text-align:center;font-size:clamp(45px,14vw,75px);color:#00ff4c;font-weight:800}
+.value{text-align:center;font-size:clamp(24px,7vw,38px);font-weight:800;color:#21d8ff}
+.small{text-align:center;font-size:11px;color:#9aaab1}
+.row{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px solid #1d2a30;font-size:13px}
+.error{text-align:center;color:#ff4141;font-size:12px;margin-top:8px}
+.footer{text-align:center;color:#68767d;font-size:10px;padding:12px}
+@media(max-width:430px){.status{grid-template-columns:1fr 1fr}.status .badge:last-child{grid-column:1/-1}}
+</style>
+</head>
+
+<body>
+<div class="header">
+  <div class="title">MOULD COUNTER SCADA</div>
+  <div class="sub">MAXWELL AUTO COMPONENTS • CLOUD MOBILE VIEW</div>
+</div>
+
+<div class="page">
+
+  <div class="status">
+    <div class="badge" id="connection">SUPABASE : --</div>
+    <div class="badge" id="machineStatus">MACHINE : --</div>
+    <div class="badge yellow" id="clock">--</div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h3>MOULD COUNT</h3>
+      <div class="big" id="count">0</div>
+      <div class="small">CURRENT COUNT</div>
+    </div>
+
+    <div class="card">
+      <h3>MACHINE</h3>
+      <div class="value" id="machine">--</div>
+    </div>
+
+    <div class="card">
+      <h3>SHIFT</h3>
+      <div class="value" id="shift">--</div>
+    </div>
+
+    <div class="card">
+      <h3>STATUS</h3>
+      <div class="value" id="status">--</div>
+    </div>
+
+    <div class="card full">
+      <h3>PRODUCTION SUMMARY</h3>
+      <div class="row">
+        <span>Mould Count</span>
+        <b id="sCount">0</b>
+      </div>
+      <div class="row">
+        <span>Machine</span>
+        <b id="sMachine">--</b>
+      </div>
+      <div class="row">
+        <span>Shift</span>
+        <b id="sShift">--</b>
+      </div>
+      <div class="row">
+        <span>Status</span>
+        <b id="sStatus">--</b>
+      </div>
+      <div class="row">
+        <span>Last Updated</span>
+        <b id="updated">--</b>
+      </div>
+    </div>
+
+    <div class="card full">
+      <div class="small">AUTO REFRESH : 2 SEC</div>
+      <div class="error" id="error"></div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    SUPABASE CLOUD • MOBILE SCADA
+  </div>
+</div>
+
+<script>
+/*
+  IMPORTANT:
+  Replace only these two values.
+  Use your Supabase Project URL and Publishable key.
+  NEVER use the service_role/secret key in this HTML.
+*/
+const SUPABASE_URL = "https://tucbbzsnvcytzybthccs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_oChnfqH1JfJJLiPWu-6ITA_Y1y_zLR6";
+
+const MACHINE_ID = 1;
+
+function setText(id, value){
+  const e=document.getElementById(id);
+  if(e) e.textContent=value;
+}
+
+function formatTime(value){
+  if(!value) return "--";
+  const d=new Date(value);
+  if(isNaN(d.getTime())) return value;
+  return d.toLocaleString();
+}
+
+async function refreshData(){
+  try{
+    const url =
+      SUPABASE_URL +
+      "/rest/v1/mould_counter?id=eq." +
+      MACHINE_ID +
+      "&select=id,machine_name,mould_count,shift,status,updated_at";
+
+    const response = await fetch(url,{
+      method:"GET",
+      headers:{
+        "apikey":SUPABASE_KEY,
+        "Authorization":"Bearer "+SUPABASE_KEY
+      },
+      cache:"no-store"
+    });
+
+    if(!response.ok){
+      throw new Error("HTTP "+response.status);
+    }
+
+    const rows=await response.json();
+
+    if(!rows.length){
+      throw new Error("DISA MOULD COUNT record not found");
+    }
+
+    const d=rows[0];
+
+    setText("count",d.mould_count ?? 0);
+    setText("machine",d.machine_name ?? "--");
+    setText("shift",d.shift ?? "--");
+    setText("status",d.status ?? "--");
+
+    setText("sCount",d.mould_count ?? 0);
+    setText("sMachine",d.machine_name ?? "--");
+    setText("sShift",d.shift ?? "--");
+    setText("sStatus",d.status ?? "--");
+    setText("updated",formatTime(d.updated_at));
+
+    setText("clock",new Date().toLocaleTimeString());
+
+    const status=String(d.status || "").toUpperCase();
+    const statusElement=document.getElementById("status");
+    const machineStatus=document.getElementById("machineStatus");
+
+    if(status==="RUNNING"){
+      statusElement.className="value green";
+      machineStatus.className="badge green";
+      machineStatus.textContent="MACHINE : RUNNING";
+    }else{
+      statusElement.className="value red";
+      machineStatus.className="badge red";
+      machineStatus.textContent="MACHINE : "+(d.status || "STOPPED");
+    }
+
+    const connection=document.getElementById("connection");
+    connection.className="badge green";
+    connection.textContent="SUPABASE : CONNECTED";
+
+    setText("error","");
+  }
+  catch(error){
+    const connection=document.getElementById("connection");
+    connection.className="badge red";
+    connection.textContent="SUPABASE : ERROR";
+    setText("error","Connection error: "+error.message);
+  }
+}
+
+refreshData();
+setInterval(refreshData,2000);
+</script>
+</body>
+</html>
