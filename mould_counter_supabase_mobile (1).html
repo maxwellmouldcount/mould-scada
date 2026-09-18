@@ -2,203 +2,1779 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#061016">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0,
+maximum-scale=1.0,user-scalable=no">
+
 <title>MOULD COUNTER SCADA</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#03080b;color:#eaf2f5;font-family:Arial,sans-serif}
-.header{padding:14px 10px;text-align:center;background:#061016;border-bottom:2px solid #19c9ef}
-.title{font-size:clamp(20px,6vw,30px);font-weight:800;color:#21d8ff}
-.sub{font-size:11px;color:#8ea1aa;margin-top:4px}
-.page{max-width:900px;margin:auto;padding:10px}
-.status{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}
-.badge,.card{background:#071116;border:1px solid #2b3a42;border-radius:8px}
-.badge{padding:9px 4px;text-align:center;font-size:12px;font-weight:bold}
-.green{color:#00ff4c}.red{color:#ff4141}.yellow{color:#ffe94a}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.card{padding:12px}
-.full{grid-column:1/-1}
-.card h3{text-align:center;font-size:13px;color:#21d8ff;margin:0 0 9px}
-.big{text-align:center;font-size:clamp(45px,14vw,75px);color:#00ff4c;font-weight:800}
-.value{text-align:center;font-size:clamp(24px,7vw,38px);font-weight:800;color:#21d8ff}
-.small{text-align:center;font-size:11px;color:#9aaab1}
-.row{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px solid #1d2a30;font-size:13px}
-.error{text-align:center;color:#ff4141;font-size:12px;margin-top:8px}
-.footer{text-align:center;color:#68767d;font-size:10px;padding:12px}
-@media(max-width:430px){.status{grid-template-columns:1fr 1fr}.status .badge:last-child{grid-column:1/-1}}
+
+/* ================= BASIC ================= */
+
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    background:#02070a;
+    color:#eee;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    overflow:hidden;
+}
+
+#viewport{
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    position:relative;
+    background:#02070a;
+}
+
+#scada{
+    position:absolute;
+    left:0;
+    top:0;
+
+    width:1200px;
+    height:820px;
+
+    padding:8px;
+
+    background:#02070a;
+
+    transform-origin:top left;
+}
+
+
+/* ================= HEADER ================= */
+
+.top{
+    height:74px;
+
+    display:grid;
+
+    grid-template-columns:
+    24% 52% 24%;
+
+    border-bottom:
+    1px solid #34444c;
+}
+
+.company{
+    color:#18dfff;
+    font-weight:bold;
+    font-size:15px;
+    line-height:17px;
+}
+
+.shift{
+    color:#ffe500;
+    font-weight:bold;
+    font-size:13px;
+    margin-top:7px;
+}
+
+.title{
+    text-align:center;
+    font-size:25px;
+    font-weight:bold;
+    padding-top:2px;
+}
+
+.date{
+    text-align:right;
+    color:#ffe500;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.status{
+    text-align:right;
+    color:#00ff42;
+    font-weight:bold;
+    font-size:13px;
+    margin-top:7px;
+}
+
+
+/* ================= MAIN ================= */
+
+.main{
+    height:690px;
+
+    display:grid;
+
+    grid-template-columns:
+    46% 44% 10%;
+
+    gap:8px;
+
+    padding-top:8px;
+}
+
+.left,
+.center,
+.right{
+    min-width:0;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:7px;
+}
+
+
+/* ================= PANEL ================= */
+
+.panel{
+    background:#050d11;
+
+    border:1px solid #2b3b43;
+
+    border-radius:5px;
+
+    overflow:hidden;
+}
+
+.panel-title{
+    text-align:center;
+
+    color:#18dfff;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    padding:7px 3px;
+}
+
+
+/* ================= TOTAL ================= */
+
+.total-panel{
+    height:140px;
+}
+
+.total-number{
+    text-align:center;
+
+    color:#00ff3c;
+
+    font-size:50px;
+
+    font-weight:bold;
+
+    line-height:55px;
+}
+
+.yellow-row{
+    display:flex;
+
+    justify-content:space-around;
+
+    color:#ffe500;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    padding-top:8px;
+}
+
+
+/* ================= SENSOR ================= */
+
+.sensor-panel{
+    height:140px;
+}
+
+.sensor-body{
+    display:grid;
+
+    grid-template-columns:
+    1fr 1fr 1fr;
+
+    align-items:center;
+
+    height:92px;
+}
+
+.dot{
+    width:16px;
+    height:16px;
+
+    border-radius:50%;
+
+    background:#aaa;
+
+    margin:auto;
+}
+
+.sensor-state{
+    text-align:center;
+
+    color:#ff3131;
+
+    font-size:20px;
+
+    font-weight:bold;
+}
+
+.voltage{
+    text-align:center;
+
+    color:#00ff42;
+
+    font-size:18px;
+
+    font-weight:bold;
+}
+
+
+/* =================================================
+   LAST 10 MOULD RECORDS
+   ================================================= */
+
+.records-panel{
+    flex:1;
+
+    min-height:280px;
+}
+
+.table-wrap{
+    padding:
+    0 7px 7px;
+
+    height:
+    calc(100% - 34px);
+
+    overflow:hidden;
+}
+
+
+/* IMPORTANT */
+
+table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    table-layout:fixed;
+
+    font-size:11px;
+}
+
+
+/* COLUMN WIDTH */
+
+th:nth-child(1),
+td:nth-child(1){
+    width:8%;
+}
+
+th:nth-child(2),
+td:nth-child(2){
+    width:22%;
+}
+
+th:nth-child(3),
+td:nth-child(3){
+    width:24%;
+}
+
+th:nth-child(4),
+td:nth-child(4){
+    width:21%;
+}
+
+th:nth-child(5),
+td:nth-child(5){
+    width:25%;
+}
+
+
+th,
+td{
+    border:
+    1px solid #34444c;
+
+    padding:
+    6px 5px;
+
+    text-align:center;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:clip;
+}
+
+th{
+    background:#0a151b;
+
+    color:#eee;
+
+    font-weight:bold;
+}
+
+td.valid{
+    color:#00ff42;
+}
+
+
+/* ================= GRAPH ================= */
+
+.graph-panel{
+    flex:1;
+
+    min-height:430px;
+}
+
+.graph{
+    height:
+    calc(100% - 35px);
+
+    min-height:390px;
+
+    padding:
+    5px 8px 25px;
+
+    display:flex;
+
+    align-items:flex-end;
+
+    gap:2px;
+
+    border-top:
+    1px solid #25343b;
+}
+
+.bar-wrap{
+    height:100%;
+
+    flex:1;
+
+    position:relative;
+
+    display:flex;
+
+    align-items:flex-end;
+
+    justify-content:center;
+}
+
+.bar{
+    width:72%;
+
+    min-height:2px;
+
+    background:#16d83b;
+}
+
+.bar-value{
+    position:absolute;
+
+    color:#eee;
+
+    font-size:8px;
+
+    left:50%;
+
+    transform:
+    translateX(-50%);
+}
+
+.bar-label{
+    position:absolute;
+
+    bottom:-24px;
+
+    font-size:7px;
+
+    color:#aaa;
+
+    transform:
+    rotate(-90deg);
+
+    white-space:nowrap;
+}
+
+
+/* ================= PRODUCTION ================= */
+
+.production{
+    height:172px;
+}
+
+.prod-row{
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:7px;
+
+    border-bottom:
+    1px solid #26343a;
+
+    font-size:11px;
+}
+
+.prod-row b{
+    color:#18dfff;
+
+    font-size:16px;
+}
+
+
+/* ================= SHIFT ================= */
+
+.shift-panel{
+    height:120px;
+}
+
+.shift-row{
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:7px;
+
+    font-size:9px;
+}
+
+.shift-row b{
+    color:#00ff42;
+
+    font-size:15px;
+}
+
+
+/* ================= IO ================= */
+
+.io-panel{
+    flex:1;
+
+    min-height:300px;
+}
+
+.io-item{
+    margin:7px;
+
+    border:
+    1px solid #304149;
+
+    border-radius:5px;
+
+    padding:17px 5px;
+
+    min-height:65px;
+
+    font-size:9px;
+
+    position:relative;
+}
+
+.io-dot{
+    position:absolute;
+
+    right:-5px;
+
+    top:50%;
+
+    width:9px;
+
+    height:9px;
+
+    border-radius:50%;
+
+    background:#aaa;
+}
+
+
+/* ================= BOTTOM ================= */
+
+.bottom{
+    height:38px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(6,1fr);
+
+    gap:7px;
+
+    padding-top:7px;
+}
+
+.btn{
+    border:0;
+
+    border-radius:3px;
+
+    color:#fff;
+
+    font-weight:bold;
+
+    font-size:11px;
+}
+
+.start{
+    background:#008b17;
+}
+
+.stop{
+    background:#b00000;
+}
+
+.reset{
+    background:#9b6200;
+}
+
+.report{
+    background:#17488c;
+}
+
+.history{
+    background:#642078;
+}
+
+.settings{
+    background:#075a60;
+}
+
+
+/* ================= FOOTER ================= */
+
+.footer{
+    position:absolute;
+
+    bottom:2px;
+
+    left:8px;
+
+    right:8px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    color:#89979e;
+
+    font-size:9px;
+
+    pointer-events:none;
+}
+
+
+/* =================================================
+   MOBILE
+   ================================================= */
+
+@media(max-width:700px){
+
+    #scada{
+        width:1200px;
+        height:820px;
+    }
+
+    /*
+       Keep complete PC layout and scale it.
+       This prevents table columns from breaking.
+    */
+
+    table{
+        table-layout:fixed;
+    }
+
+    th,
+    td{
+        white-space:nowrap;
+
+        padding:
+        6px 4px;
+
+        font-size:11px;
+
+        height:30px;
+    }
+
+}
+
 </style>
 </head>
 
+
 <body>
-<div class="header">
-  <div class="title">MOULD COUNTER SCADA</div>
-  <div class="sub">MAXWELL AUTO COMPONENTS • CLOUD MOBILE VIEW</div>
+
+<div id="viewport">
+
+<div id="scada">
+
+
+<!-- ================= HEADER ================= -->
+
+<div class="top">
+
+    <div>
+
+        <div class="company">
+            MAXWELL AUTO COMPONENTS<br>
+            COIMBATORE
+        </div>
+
+        <div
+        class="shift"
+        id="shiftHeader">
+            SHIFT: --
+        </div>
+
+    </div>
+
+
+    <div>
+
+        <div class="title">
+            MOULD COUNTER SCADA
+        </div>
+
+        <div
+        class="status"
+        id="scadaStatus">
+            SCADA STATUS : --
+        </div>
+
+    </div>
+
+
+    <div>
+
+        <div
+        class="date"
+        id="clock">
+            --
+        </div>
+
+        <div
+        class="status"
+        id="modbusStatus">
+            SUPABASE : --
+        </div>
+
+    </div>
+
 </div>
 
-<div class="page">
 
-  <div class="status">
-    <div class="badge" id="connection">SUPABASE : --</div>
-    <div class="badge" id="machineStatus">MACHINE : --</div>
-    <div class="badge yellow" id="clock">--</div>
-  </div>
+<!-- ================= MAIN ================= -->
 
-  <div class="grid">
+<div class="main">
 
-    <div class="card">
-      <h3>MOULD COUNT</h3>
-      <div class="big" id="count">0</div>
-      <div class="small">CURRENT COUNT</div>
+
+<!-- ================= LEFT ================= -->
+
+<div class="left">
+
+
+<!-- TOTAL -->
+
+<div class="panel total-panel">
+
+    <div class="panel-title">
+        TOTAL MOULD COUNT
     </div>
 
-    <div class="card">
-      <h3>MACHINE</h3>
-      <div class="value" id="machine">--</div>
+    <div
+    class="total-number"
+    id="total">
+        0
     </div>
 
-    <div class="card">
-      <h3>SHIFT</h3>
-      <div class="value" id="shift">--</div>
+    <div class="yellow-row">
+
+        <span id="lastTime">
+            --
+        </span>
+
+        <span id="cycle">
+            -- SEC
+        </span>
+
     </div>
 
-    <div class="card">
-      <h3>STATUS</h3>
-      <div class="value" id="status">--</div>
-    </div>
-
-    <div class="card full">
-      <h3>PRODUCTION SUMMARY</h3>
-      <div class="row">
-        <span>Mould Count</span>
-        <b id="sCount">0</b>
-      </div>
-      <div class="row">
-        <span>Machine</span>
-        <b id="sMachine">--</b>
-      </div>
-      <div class="row">
-        <span>Shift</span>
-        <b id="sShift">--</b>
-      </div>
-      <div class="row">
-        <span>Status</span>
-        <b id="sStatus">--</b>
-      </div>
-      <div class="row">
-        <span>Last Updated</span>
-        <b id="updated">--</b>
-      </div>
-    </div>
-
-    <div class="card full">
-      <div class="small">AUTO REFRESH : 2 SEC</div>
-      <div class="error" id="error"></div>
-    </div>
-
-  </div>
-
-  <div class="footer">
-    SUPABASE CLOUD • MOBILE SCADA
-  </div>
 </div>
+
+
+<!-- SENSOR -->
+
+<div class="panel sensor-panel">
+
+    <div class="panel-title">
+        SENSOR STATUS (AI1)
+    </div>
+
+    <div class="sensor-body">
+
+        <div
+        class="dot"
+        id="sensorDot">
+        </div>
+
+        <div
+        class="sensor-state"
+        id="sensorState">
+            --
+        </div>
+
+        <div
+        class="voltage"
+        id="voltage">
+            -- V
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     LAST 10 RECORDS
+     ================================================= -->
+
+<div class="panel records-panel">
+
+    <div class="panel-title">
+        LAST 10 MOULD RECORDS
+    </div>
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No.</th>
+
+                    <th>MOULD COUNT</th>
+
+                    <th>MOULD TIME</th>
+
+                    <th>SHIFT</th>
+
+                    <th>STATUS</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="records">
+
+                <tr>
+
+                    <td colspan="5">
+                        Waiting...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- ================= CENTER ================= -->
+
+<div class="center">
+
+    <div class="panel graph-panel">
+
+        <div class="panel-title">
+            MOULD COUNT TREND (TODAY)
+        </div>
+
+        <div
+        class="graph"
+        id="graph">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= RIGHT ================= -->
+
+<div class="right">
+
+
+<div class="panel production">
+
+    <div class="panel-title">
+        PRODUCTION
+    </div>
+
+    <div class="prod-row">
+        <span>TODAY TOTAL</span>
+        <b id="today">0</b>
+    </div>
+
+    <div class="prod-row">
+        <span>THIS SHIFT</span>
+        <b id="thisShift">0</b>
+    </div>
+
+    <div class="prod-row">
+        <span>THIS HOUR</span>
+        <b id="thisHour">0</b>
+    </div>
+
+    <div class="prod-row">
+        <span>PREV. HOUR</span>
+        <b id="prevHour">0</b>
+    </div>
+
+    <div class="prod-row">
+        <span>AVERAGE / HOUR</span>
+        <b id="average">0.0</b>
+    </div>
+
+</div>
+
+
+<div class="panel shift-panel">
+
+    <div class="panel-title">
+        SHIFT WISE COUNT
+    </div>
+
+    <div class="shift-row">
+        <span>SHIFT-1</span>
+        <b id="s1">0</b>
+    </div>
+
+    <div class="shift-row">
+        <span>SHIFT-2</span>
+        <b id="s2">0</b>
+    </div>
+
+    <div class="shift-row">
+        <span>SHIFT-3</span>
+        <b id="s3">0</b>
+    </div>
+
+</div>
+
+
+<div class="panel io-panel">
+
+    <div class="panel-title">
+        I/O STATUS
+    </div>
+
+    <div class="io-item">
+        AI1 (MOULD SENSOR)
+        <span class="io-dot"></span>
+    </div>
+
+    <div class="io-item">
+        AI2
+        <span class="io-dot"></span>
+    </div>
+
+    <div class="io-item">
+        AI3
+        <span class="io-dot"></span>
+    </div>
+
+    <div class="io-item">
+        AI4
+        <span class="io-dot"></span>
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= BUTTONS ================= -->
+
+<div class="bottom">
+
+    <button class="btn start">
+        START
+    </button>
+
+    <button class="btn stop">
+        STOP
+    </button>
+
+    <button class="btn reset">
+        RESET COUNT
+    </button>
+
+    <button class="btn report">
+        REPORT
+    </button>
+
+    <button class="btn history">
+        HISTORY
+    </button>
+
+    <button class="btn settings">
+        SETTINGS
+    </button>
+
+</div>
+
+
+<div class="footer">
+
+    <span>
+        USER : ADMIN
+    </span>
+
+    <span>
+        DATA LOGGING : ON
+    </span>
+
+    <span>
+        SUPABASE : ON
+    </span>
+
+    <span id="machineFooter">
+        MACHINE : --
+    </span>
+
+</div>
+
+</div>
+</div>
+
 
 <script>
-/*
-  IMPORTANT:
-  Replace only these two values.
-  Use your Supabase Project URL and Publishable key.
-  NEVER use the service_role/secret key in this HTML.
-*/
-const SUPABASE_URL = "https://tucbbzsnvcytzybthccs.supabase.co";
-const SUPABASE_KEY = "sb_publishable_oChnfqH1JfJJLiPWu-6ITA_Y1y_zLR6";
 
-const MACHINE_ID = 1;
+/* =================================================
+   SUPABASE
+   ================================================= */
 
-function setText(id, value){
-  const e=document.getElementById(id);
-  if(e) e.textContent=value;
+const SUPABASE_URL =
+"https://jdidxmwjuecedwmylcqc.supabase.co";
+
+
+const SUPABASE_KEY =
+"sb_publishable_nYuMBxR0GyXF3TQhjWvyRg_fdU82MnV";
+
+
+const TABLE =
+"Mould_counter";
+
+
+/* =================================================
+   MOBILE SCALE
+   ================================================= */
+
+function fitScreen(){
+
+    const scada =
+    document.getElementById("scada");
+
+    const w =
+    window.innerWidth;
+
+    const h =
+    window.innerHeight;
+
+    const scale =
+    Math.min(
+        w / 1200,
+        h / 820
+    );
+
+    scada.style.transform =
+    "scale(" + scale + ")";
+
 }
 
-function formatTime(value){
-  if(!value) return "--";
-  const d=new Date(value);
-  if(isNaN(d.getTime())) return value;
-  return d.toLocaleString();
+window.addEventListener(
+    "resize",
+    fitScreen
+);
+
+window.addEventListener(
+    "orientationchange",
+    function(){
+        setTimeout(
+            fitScreen,
+            200
+        );
+    }
+);
+
+fitScreen();
+
+
+/* =================================================
+   HELPER
+   ================================================= */
+
+function setText(id,value){
+
+    const e =
+    document.getElementById(id);
+
+    if(e){
+
+        e.textContent =
+        value;
+
+    }
+
 }
 
-async function refreshData(){
-  try{
-    const url =
-      SUPABASE_URL +
-      "/rest/v1/mould_counter?id=eq." +
-      MACHINE_ID +
-      "&select=id,machine_name,mould_count,shift,status,updated_at";
 
-    const response = await fetch(url,{
-      method:"GET",
-      headers:{
-        "apikey":SUPABASE_KEY,
-        "Authorization":"Bearer "+SUPABASE_KEY
-      },
-      cache:"no-store"
-    });
+/* =================================================
+   PRODUCTION START
+   ================================================= */
 
-    if(!response.ok){
-      throw new Error("HTTP "+response.status);
+function productionStart(){
+
+    const now =
+    new Date();
+
+    const start =
+    new Date(now);
+
+    start.setHours(
+        8,
+        30,
+        0,
+        0
+    );
+
+    if(now < start){
+
+        start.setDate(
+            start.getDate() - 1
+        );
+
     }
 
-    const rows=await response.json();
+    return start;
 
-    if(!rows.length){
-      throw new Error("DISA MOULD COUNT record not found");
-    }
-
-    const d=rows[0];
-
-    setText("count",d.mould_count ?? 0);
-    setText("machine",d.machine_name ?? "--");
-    setText("shift",d.shift ?? "--");
-    setText("status",d.status ?? "--");
-
-    setText("sCount",d.mould_count ?? 0);
-    setText("sMachine",d.machine_name ?? "--");
-    setText("sShift",d.shift ?? "--");
-    setText("sStatus",d.status ?? "--");
-    setText("updated",formatTime(d.updated_at));
-
-    setText("clock",new Date().toLocaleTimeString());
-
-    const status=String(d.status || "").toUpperCase();
-    const statusElement=document.getElementById("status");
-    const machineStatus=document.getElementById("machineStatus");
-
-    if(status==="RUNNING"){
-      statusElement.className="value green";
-      machineStatus.className="badge green";
-      machineStatus.textContent="MACHINE : RUNNING";
-    }else{
-      statusElement.className="value red";
-      machineStatus.className="badge red";
-      machineStatus.textContent="MACHINE : "+(d.status || "STOPPED");
-    }
-
-    const connection=document.getElementById("connection");
-    connection.className="badge green";
-    connection.textContent="SUPABASE : CONNECTED";
-
-    setText("error","");
-  }
-  catch(error){
-    const connection=document.getElementById("connection");
-    connection.className="badge red";
-    connection.textContent="SUPABASE : ERROR";
-    setText("error","Connection error: "+error.message);
-  }
 }
 
-refreshData();
-setInterval(refreshData,2000);
+
+/* =================================================
+   TIME
+   ================================================= */
+
+function fmtTime(value){
+
+    if(!value){
+
+        return "--";
+
+    }
+
+    return new Date(
+        value
+    ).toLocaleTimeString(
+        "en-IN",
+        {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+            hour12:false
+        }
+    );
+
+}
+
+
+/* =================================================
+   SHIFT
+   ================================================= */
+
+function shiftFromDate(d){
+
+    const minutes =
+    d.getHours()*60 +
+    d.getMinutes();
+
+
+    if(
+        minutes >= 510 &&
+        minutes < 1050
+    ){
+
+        return "SHIFT-1";
+
+    }
+
+
+    if(
+        minutes >= 1050 ||
+        minutes < 60
+    ){
+
+        return "SHIFT-2";
+
+    }
+
+
+    return "SHIFT-3";
+
+}
+
+
+/* =================================================
+   CLOCK
+   ================================================= */
+
+function updateClock(){
+
+    setText(
+        "clock",
+
+        new Date().toLocaleString(
+            "en-IN",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric",
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit",
+                hour12:false
+            }
+        )
+    );
+
+}
+
+
+/* =================================================
+   SUPABASE DATA
+   ================================================= */
+
+async function refresh(){
+
+    try{
+
+        const url =
+        SUPABASE_URL +
+        "/rest/v1/" +
+        TABLE +
+        "?select=id,Machine_name,Mould_count,Shift,Status,Update_at" +
+        "&order=Update_at.asc" +
+        "&limit=1000";
+
+
+        const response =
+        await fetch(
+            url,
+            {
+                headers:{
+                    apikey:
+                    SUPABASE_KEY,
+
+                    Authorization:
+                    "Bearer " +
+                    SUPABASE_KEY
+                },
+
+                cache:
+                "no-store"
+            }
+        );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+
+        }
+
+
+        const all =
+        await response.json();
+
+
+        setText(
+            "modbusStatus",
+            "SUPABASE : CONNECTED"
+        );
+
+
+        const start =
+        productionStart();
+
+
+        const rows =
+        all.filter(
+            x =>
+            new Date(
+                x.Update_at
+            ) >= start
+        );
+
+
+        if(!rows.length){
+
+            setText(
+                "total",
+                0
+            );
+
+            setText(
+                "today",
+                0
+            );
+
+            setText(
+                "thisShift",
+                0
+            );
+
+            setText(
+                "thisHour",
+                0
+            );
+
+            setText(
+                "prevHour",
+                0
+            );
+
+            setText(
+                "average",
+                "0.0"
+            );
+
+            setText(
+                "shiftHeader",
+                "SHIFT: --"
+            );
+
+            setText(
+                "scadaStatus",
+                "SCADA STATUS : WAITING"
+            );
+
+            document
+            .getElementById(
+                "records"
+            )
+            .innerHTML =
+            "<tr><td colspan='5'>No production data</td></tr>";
+
+            drawGraph([]);
+
+            return;
+
+        }
+
+
+        const latest =
+        rows[
+            rows.length - 1
+        ];
+
+
+        const latestTime =
+        new Date(
+            latest.Update_at
+        );
+
+
+        const total =
+        Number(
+            latest.Mould_count || 0
+        );
+
+
+        const now =
+        new Date();
+
+
+        const currentShift =
+        latest.Shift ||
+        shiftFromDate(
+            latestTime
+        );
+
+
+        setText(
+            "total",
+            total
+        );
+
+
+        setText(
+            "today",
+            total
+        );
+
+
+        setText(
+            "shiftHeader",
+            "SHIFT: " +
+            currentShift
+        );
+
+
+        setText(
+            "scadaStatus",
+            "SCADA STATUS : " +
+            (
+                latest.Status ||
+                "--"
+            )
+        );
+
+
+        setText(
+            "lastTime",
+            fmtTime(
+                latest.Update_at
+            )
+        );
+
+
+        setText(
+            "machineFooter",
+            "MACHINE : " +
+            (
+                latest.Machine_name ||
+                "--"
+            )
+        );
+
+
+        setText(
+            "cycle",
+            "-- SEC"
+        );
+
+
+        /* THIS HOUR */
+
+        const hourStart =
+        new Date(now);
+
+        hourStart.setMinutes(
+            0,
+            0,
+            0
+        );
+
+
+        const thisHour =
+        rows.filter(
+            x =>
+            new Date(
+                x.Update_at
+            ) >= hourStart
+        ).length;
+
+
+        setText(
+            "thisHour",
+            thisHour
+        );
+
+
+        /* PREVIOUS HOUR */
+
+        const previousStart =
+        new Date(
+            hourStart.getTime()
+            - 3600000
+        );
+
+
+        const previousHour =
+        rows.filter(
+            x => {
+
+                const t =
+                new Date(
+                    x.Update_at
+                );
+
+                return (
+                    t >= previousStart &&
+                    t < hourStart
+                );
+
+            }
+        ).length;
+
+
+        setText(
+            "prevHour",
+            previousHour
+        );
+
+
+        /* SHIFT */
+
+        const shiftRows =
+        rows.filter(
+            x =>
+            String(
+                x.Shift ||
+                shiftFromDate(
+                    new Date(
+                        x.Update_at
+                    )
+                )
+            ).toUpperCase()
+            ===
+            String(
+                currentShift
+            ).toUpperCase()
+        );
+
+
+        setText(
+            "thisShift",
+            shiftRows.length
+        );
+
+
+        /* AVERAGE */
+
+        const hours =
+        Math.max(
+            1,
+            (
+                now -
+                start
+            ) / 3600000
+        );
+
+
+        setText(
+            "average",
+            (
+                total /
+                hours
+            ).toFixed(1)
+        );
+
+
+        /* SHIFT WISE */
+
+        let s1 = 0;
+        let s2 = 0;
+        let s3 = 0;
+
+
+        rows.forEach(
+            x => {
+
+                const s =
+                String(
+                    x.Shift ||
+                    shiftFromDate(
+                        new Date(
+                            x.Update_at
+                        )
+                    )
+                ).toUpperCase();
+
+
+                if(
+                    s.includes(
+                        "SHIFT-1"
+                    ) ||
+                    s === "1"
+                ){
+
+                    s1++;
+
+                }
+                else if(
+                    s.includes(
+                        "SHIFT-2"
+                    ) ||
+                    s === "2"
+                ){
+
+                    s2++;
+
+                }
+                else if(
+                    s.includes(
+                        "SHIFT-3"
+                    ) ||
+                    s === "3"
+                ){
+
+                    s3++;
+
+                }
+
+            }
+        );
+
+
+        setText("s1",s1);
+        setText("s2",s2);
+        setText("s3",s3);
+
+
+        /* =================================================
+           LAST 10 RECORDS
+           ================================================= */
+
+        const last10 =
+        rows
+        .slice(-10)
+        .reverse();
+
+
+        let html = "";
+
+
+        last10.forEach(
+            function(x,i){
+
+                html +=
+                "<tr>" +
+
+                "<td>" +
+                (i + 1) +
+                "</td>" +
+
+                "<td>" +
+                (
+                    x.Mould_count ??
+                    "--"
+                ) +
+                "</td>" +
+
+                "<td>" +
+                fmtTime(
+                    x.Update_at
+                ) +
+                "</td>" +
+
+                "<td>" +
+                (
+                    x.Shift ??
+                    "--"
+                ) +
+                "</td>" +
+
+                "<td class='valid'>" +
+                (
+                    x.Status ??
+                    "--"
+                ) +
+                "</td>" +
+
+                "</tr>";
+
+            }
+        );
+
+
+        document
+        .getElementById(
+            "records"
+        )
+        .innerHTML =
+        html;
+
+
+        drawGraph(
+            rows
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "SCADA ERROR:",
+            error
+        );
+
+        setText(
+            "modbusStatus",
+            "SUPABASE : ERROR"
+        );
+
+    }
+
+}
+
+
+/* =================================================
+   GRAPH
+   ================================================= */
+
+function drawGraph(rows){
+
+    const start =
+    productionStart();
+
+
+    const values =
+    new Array(24).fill(0);
+
+
+    rows.forEach(
+        x => {
+
+            const t =
+            new Date(
+                x.Update_at
+            );
+
+
+            const index =
+            Math.floor(
+                (
+                    t -
+                    start
+                ) /
+                3600000
+            );
+
+
+            if(
+                index >= 0 &&
+                index < 24
+            ){
+
+                values[index]++;
+
+            }
+
+        }
+    );
+
+
+    const max =
+    Math.max(
+        1,
+        ...values
+    );
+
+
+    let html = "";
+
+
+    values.forEach(
+        function(value,index){
+
+            const height =
+            Math.max(
+                2,
+                (
+                    value /
+                    max
+                ) * 300
+            );
+
+
+            const d =
+            new Date(
+                start.getTime() +
+                index *
+                3600000
+            );
+
+
+            const label =
+            d.toLocaleTimeString(
+                "en-IN",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit",
+                    hour12:false
+                }
+            );
+
+
+            html +=
+            "<div class='bar-wrap'>" +
+
+            "<div class='bar' " +
+            "style='height:" +
+            height +
+            "px'></div>" +
+
+            "<div class='bar-value' " +
+            "style='bottom:" +
+            (height + 2) +
+            "px'>" +
+            value +
+            "</div>" +
+
+            "<div class='bar-label'>" +
+            label +
+            "</div>" +
+
+            "</div>";
+
+        }
+    );
+
+
+    document
+    .getElementById(
+        "graph"
+    )
+    .innerHTML =
+    html;
+
+}
+
+
+/* =================================================
+   START
+   ================================================= */
+
+updateClock();
+
+refresh();
+
+setInterval(
+    updateClock,
+    1000
+);
+
+setInterval(
+    refresh,
+    2000
+);
+
 </script>
+
 </body>
 </html>
