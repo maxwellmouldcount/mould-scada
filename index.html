@@ -1,8 +1,982 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MOULD COUNTER SCADA</title><style>
-*{box-sizing:border-box}body{margin:0;background:#03080b;color:#eaf2f5;font:14px Arial,sans-serif}.head{padding:14px 10px;text-align:center;border-bottom:2px solid #19c9ef;background:#061016}.title{font-size:clamp(21px,6vw,30px);font-weight:800;color:#21d8ff}.sub,.small,.footer{font-size:11px;color:#8ea1aa}.page{max-width:1100px;margin:auto;padding:8px}.status,.grid{display:grid;gap:8px}.status{grid-template-columns:repeat(3,1fr);margin-bottom:8px}.grid{grid-template-columns:repeat(4,1fr)}.badge,.card{background:#071116;border:1px solid #2b3a42;border-radius:7px}.badge{padding:9px 4px;text-align:center;font-weight:bold}.card{padding:10px}.full{grid-column:1/-1}.card h3{text-align:center;color:#21d8ff;font-size:12px;margin:0 0 8px}.big,.value{text-align:center;font-weight:800;color:#21d8ff}.big{font-size:clamp(42px,12vw,68px);color:#00ff4c}.value{font-size:clamp(21px,5vw,32px)}.green{color:#00ff4c}.red{color:#ff4141}.yellow{color:#ffe94a}.gauge{height:16px;border:1px solid #30424b;border-radius:9px;overflow:hidden;margin:8px 0}.gauge div{height:100%;background:#19d83b}.chart{height:250px;display:flex;align-items:flex-end;gap:2px;padding:15px 2px 35px;border-bottom:1px solid #34444c}.barwrap{height:100%;flex:1;min-width:10px;display:flex;align-items:flex-end;justify-content:center;position:relative}.bar{width:82%;background:#19d83b}.barvalue{position:absolute;font-size:8px;color:#fff}.barlabel{position:absolute;bottom:-25px;font-size:8px;color:#93a3aa;transform:rotate(-90deg);white-space:nowrap}.row{display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px solid #1d2a30}.footer{text-align:center;padding:12px}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:430px){.status{grid-template-columns:1fr 1fr}.status .badge:last-child{grid-column:1/-1}}
-</style></head><body><div class="head"><div class="title">MOULD COUNTER SCADA</div><div class="sub">MAXWELL AUTO COMPONENTS • CLOUD MOBILE SCADA</div></div><main class="page"><div class="status"><div class="badge" id="connection">SUPABASE : --</div><div class="badge" id="machineStatus">SCADA : --</div><div class="badge yellow" id="clock">--</div></div><div class="grid"><section class="card"><h3>TOTAL MOULD COUNT</h3><div class="big" id="total">0</div><div class="small">TODAY PRODUCTION</div></section><section class="card"><h3>THIS HOUR</h3><div class="value" id="hour">0</div></section><section class="card"><h3>AVERAGE / HOUR</h3><div class="value" id="avg">0.0</div></section><section class="card"><h3>PREVIOUS HOUR</h3><div class="value" id="prev">0</div></section><section class="card"><h3>SENSOR AI1</h3><div class="value" id="sensor">OFF</div><div class="gauge"><div id="vbar"></div></div><div class="small" id="voltage">0.00 V</div></section><section class="card"><h3>CYCLE TIME</h3><div class="value" id="cycle">--</div></section><section class="card"><h3>SHIFT</h3><div class="value" id="shift">--</div></section><section class="card"><h3>LAST MOULD</h3><div class="value" id="lasttime">--:--:--</div></section><section class="card full"><h3>PRODUCTION DAY: 08:30 AM - NEXT DAY 08:30 AM</h3><div class="chart" id="chart"></div><div class="small">EACH BAR = MOULD COUNT FOR ONE HOUR</div></section><section class="card full"><h3>PRODUCTION SUMMARY</h3><div class="row"><span>Machine</span><b id="machine">--</b></div><div class="row"><span>Today's Total</span><b id="sTotal">0</b></div><div class="row"><span>Status</span><b id="status">--</b></div><div class="row"><span>Last Cloud Update</span><b id="updated">--</b></div></section></div><div class="footer">AUTO REFRESH : 2 SEC • SUPABASE CLOUD</div></main><script>
-const U='https://tucbbzsnvcytzybthccs.supabase.co',K='sb_publishable_oChnfqH1JfJJLiPWu-6ITA_Y1y_zLR6',ID=1;const put=(id,v)=>document.getElementById(id).textContent=v;
-function labels(start){let d=new Date(start);if(isNaN(d)){d=new Date();d.setHours(8,30,0,0);if(new Date()<d)d.setDate(d.getDate()-1)}return Array.from({length:24},(_,i)=>{let x=new Date(d.getTime()+i*3600000);return String(x.getHours()).padStart(2,'0')+':'+String(x.getMinutes()).padStart(2,'0')})}
-function graph(values,labs){let v=Array.isArray(values)?values:Array(24).fill(0),m=Math.max(1,...v),h='';v.forEach((n,i)=>{let x=n/m*190;h+=`<div class="barwrap"><div class="bar" style="height:${Math.max(2,x)}px"></div><div class="barvalue" style="bottom:${x+2}px">${n}</div><div class="barlabel">${labs[i]}</div></div>`});document.getElementById('chart').innerHTML=h}
-async function refresh(){try{let q='machine_name,mould_count,shift,status,updated_at,today_total,this_hour,previous_hour,average_hour,sensor_voltage,sensor_active,cycle_time_sec,last_mould_time,hourly_counts,production_day_start',r=await fetch(`${U}/rest/v1/mould_counter?id=eq.${ID}&select=${q}`,{headers:{apikey:K,Authorization:'Bearer '+K},cache:'no-store'});if(!r.ok)throw Error(r.status);let d=(await r.json())[0];if(!d)throw Error('No machine record');let v=Number(d.sensor_voltage||0),run=String(d.status||'').toUpperCase()==='RUNNING';put('total',d.today_total??d.mould_count??0);put('hour',d.this_hour??0);put('avg',Number(d.average_hour||0).toFixed(1));put('prev',d.previous_hour??0);put('sensor',d.sensor_active?'ACTIVE':'OFF');put('voltage',v.toFixed(2)+' V');put('cycle',d.cycle_time_sec==null?'--':d.cycle_time_sec+' SEC');put('shift',d.shift||'--');put('lasttime',d.last_mould_time||'--:--:--');put('machine',d.machine_name||'--');put('sTotal',d.today_total??d.mould_count??0);put('status',d.status||'--');put('updated',d.updated_at?new Date(d.updated_at).toLocaleString():'--');put('clock',new Date().toLocaleTimeString());document.getElementById('vbar').style.width=Math.min(100,v/5*100)+'%';document.getElementById('sensor').className='value '+(d.sensor_active?'green':'red');let s=document.getElementById('machineStatus');s.className='badge '+(run?'green':'red');s.textContent='SCADA : '+(d.status||'STOPPED');let c=document.getElementById('connection');c.className='badge green';c.textContent='SUPABASE : CONNECTED';graph(d.hourly_counts,labels(d.production_day_start))}catch(e){let c=document.getElementById('connection');c.className='badge red';c.textContent='SUPABASE : ERROR'}}refresh();setInterval(refresh,2000);
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MOULD COUNTER SCADA</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#03080b;
+    color:#eaf2f5;
+    font:14px Arial,sans-serif;
+}
+
+.head{
+    padding:14px 10px;
+    text-align:center;
+    border-bottom:2px solid #19c9ef;
+    background:#061016;
+}
+
+.title{
+    font-size:clamp(22px,6vw,32px);
+    font-weight:800;
+    color:#21d8ff;
+}
+
+.sub{
+    font-size:11px;
+    color:#8ea1aa;
+}
+
+.page{
+    max-width:1100px;
+    margin:auto;
+    padding:8px;
+}
+
+.status{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-bottom:8px;
+}
+
+.badge,.card{
+    background:#071116;
+    border:1px solid #2b3a42;
+    border-radius:7px;
+}
+
+.badge{
+    padding:10px 4px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+}
+
+.card{
+    padding:10px;
+}
+
+.card h3{
+    text-align:center;
+    color:#21d8ff;
+    font-size:12px;
+    margin:0 0 8px;
+}
+
+.big,.value{
+    text-align:center;
+    font-weight:800;
+    color:#21d8ff;
+}
+
+.big{
+    font-size:clamp(45px,12vw,70px);
+    color:#00ff4c;
+}
+
+.value{
+    font-size:clamp(21px,5vw,32px);
+}
+
+.green{
+    color:#00ff4c;
+}
+
+.red{
+    color:#ff4141;
+}
+
+.yellow{
+    color:#ffe94a;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+.chart{
+    height:260px;
+    display:flex;
+    align-items:flex-end;
+    gap:2px;
+    padding:15px 2px 35px;
+    border-bottom:1px solid #34444c;
+}
+
+.barwrap{
+    height:100%;
+    flex:1;
+    min-width:10px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    position:relative;
+}
+
+.bar{
+    width:82%;
+    background:#19d83b;
+}
+
+.barvalue{
+    position:absolute;
+    font-size:8px;
+    color:#fff;
+}
+
+.barlabel{
+    position:absolute;
+    bottom:-25px;
+    font-size:8px;
+    color:#93a3aa;
+    transform:rotate(-90deg);
+    white-space:nowrap;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 2px;
+    border-bottom:1px solid #1d2a30;
+}
+
+.small{
+    font-size:11px;
+    color:#8ea1aa;
+}
+
+.footer{
+    text-align:center;
+    padding:12px;
+    font-size:11px;
+    color:#8ea1aa;
+}
+
+@media(max-width:800px){
+
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:430px){
+
+    .status{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .status .badge:last-child{
+        grid-column:1/-1;
+    }
+
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="head">
+
+    <div class="title">
+        MOULD COUNTER SCADA
+    </div>
+
+    <div class="sub">
+        MAXWELL AUTO COMPONENTS • CLOUD MOBILE SCADA
+    </div>
+
+</div>
+
+<main class="page">
+
+<div class="status">
+
+    <div class="badge" id="connection">
+        SUPABASE : CONNECTING
+    </div>
+
+    <div class="badge" id="machineStatus">
+        SCADA : --
+    </div>
+
+    <div class="badge yellow" id="clock">
+        --
+    </div>
+
+</div>
+
+
+<div class="grid">
+
+<!-- TOTAL -->
+
+<section class="card">
+
+<h3>TOTAL MOULD COUNT</h3>
+
+<div class="big" id="total">
+0
+</div>
+
+<div class="small">
+TODAY PRODUCTION
+</div>
+
+</section>
+
+
+<!-- THIS HOUR -->
+
+<section class="card">
+
+<h3>THIS HOUR</h3>
+
+<div class="value" id="hour">
+0
+</div>
+
+</section>
+
+
+<!-- AVERAGE -->
+
+<section class="card">
+
+<h3>AVERAGE / HOUR</h3>
+
+<div class="value" id="avg">
+0.0
+</div>
+
+</section>
+
+
+<!-- PREVIOUS -->
+
+<section class="card">
+
+<h3>PREVIOUS HOUR</h3>
+
+<div class="value" id="prev">
+0
+</div>
+
+</section>
+
+
+<!-- SENSOR -->
+
+<section class="card">
+
+<h3>SENSOR AI1</h3>
+
+<div class="value" id="sensor">
+--
+</div>
+
+<div class="small">
+Sensor data not stored in cloud table
+</div>
+
+</section>
+
+
+<!-- CYCLE -->
+
+<section class="card">
+
+<h3>CYCLE TIME</h3>
+
+<div class="value" id="cycle">
+--
+</div>
+
+</section>
+
+
+<!-- SHIFT -->
+
+<section class="card">
+
+<h3>SHIFT</h3>
+
+<div class="value" id="shift">
+--
+</div>
+
+</section>
+
+
+<!-- LAST MOULD -->
+
+<section class="card">
+
+<h3>LAST MOULD</h3>
+
+<div class="value" id="lasttime">
+--
+</div>
+
+</section>
+
+
+<!-- GRAPH -->
+
+<section class="card full">
+
+<h3>
+PRODUCTION DAY: 08:30 AM - NEXT DAY 08:30 AM
+</h3>
+
+<div class="chart" id="chart"></div>
+
+<div class="small">
+EACH BAR = MOULD COUNT FOR ONE HOUR
+</div>
+
+</section>
+
+
+<!-- SUMMARY -->
+
+<section class="card full">
+
+<h3>
+PRODUCTION SUMMARY
+</h3>
+
+<div class="row">
+<span>Machine</span>
+<b id="machine">--</b>
+</div>
+
+<div class="row">
+<span>Today's Total</span>
+<b id="sTotal">0</b>
+</div>
+
+<div class="row">
+<span>Status</span>
+<b id="status">--</b>
+</div>
+
+<div class="row">
+<span>Last Cloud Update</span>
+<b id="updated">--</b>
+</div>
+
+</section>
+
+</div>
+
+
+<div class="footer">
+AUTO REFRESH : 2 SEC • SUPABASE CLOUD
+</div>
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE SETTINGS
+   ===================================================== */
+
+const SUPABASE_URL =
+"https://jdidxmwjuecedwmylcqc.supabase.co";
+
+
+const SUPABASE_KEY =
+"tskey-auth-keETVwYB1D11CNTRL-mgMnb2suVEMn9w8KCJMjEMs4vrBPq8NC";
+
+
+const TABLE =
+"Mould_counter";
+
+
+/* =====================================================
+   ELEMENT HELPER
+   ===================================================== */
+
+function put(id,value){
+
+    document.getElementById(id).textContent =
+        value;
+
+}
+
+
+/* =====================================================
+   PRODUCTION DAY START
+   08:30 AM
+   ===================================================== */
+
+function productionStart(){
+
+    const now = new Date();
+
+    const start = new Date(now);
+
+    start.setHours(8,30,0,0);
+
+    if(now < start){
+
+        start.setDate(
+            start.getDate()-1
+        );
+
+    }
+
+    return start;
+}
+
+
+/* =====================================================
+   FETCH CLOUD DATA
+   ===================================================== */
+
+async function getData(){
+
+    const url =
+        SUPABASE_URL +
+        "/rest/v1/" +
+        TABLE +
+        "?select=*" +
+        "&order=Update_at.asc";
+
+    const response =
+        await fetch(url,{
+
+            headers:{
+                "apikey":SUPABASE_KEY,
+                "Authorization":
+                    "Bearer "+SUPABASE_KEY
+            },
+
+            cache:"no-store"
+
+        });
+
+    if(!response.ok){
+
+        throw new Error(
+            "HTTP "+response.status
+        );
+
+    }
+
+    return await response.json();
+
+}
+
+
+/* =====================================================
+   GRAPH
+   ===================================================== */
+
+function drawGraph(hourValues){
+
+    const chart =
+        document.getElementById("chart");
+
+    chart.innerHTML="";
+
+    const max =
+        Math.max(
+            1,
+            ...hourValues
+        );
+
+    hourValues.forEach(
+        (value,index)=>{
+
+            const wrap =
+                document.createElement("div");
+
+            wrap.className =
+                "barwrap";
+
+
+            const bar =
+                document.createElement("div");
+
+            bar.className =
+                "bar";
+
+
+            const height =
+                Math.max(
+                    2,
+                    (value/max)*190
+                );
+
+            bar.style.height =
+                height+"px";
+
+
+            const number =
+                document.createElement("div");
+
+            number.className =
+                "barvalue";
+
+            number.style.bottom =
+                (height+2)+"px";
+
+            number.textContent =
+                value;
+
+
+            const label =
+                document.createElement("div");
+
+            label.className =
+                "barlabel";
+
+            label.textContent =
+                index.toString()
+                .padStart(2,"0")+":00";
+
+
+            wrap.appendChild(bar);
+
+            wrap.appendChild(number);
+
+            wrap.appendChild(label);
+
+            chart.appendChild(wrap);
+
+        }
+
+    );
+
+}
+
+
+/* =====================================================
+   MAIN REFRESH
+   ===================================================== */
+
+async function refresh(){
+
+    try{
+
+        const rows =
+            await getData();
+
+
+        if(!rows.length){
+
+            throw new Error(
+                "No cloud data"
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           Convert data
+        --------------------------------------------- */
+
+        rows.forEach(row=>{
+
+            row._time =
+                new Date(
+                    row.Update_at
+                );
+
+            row._count =
+                Number(
+                    row.Mould_count || 0
+                );
+
+        });
+
+
+        /* ---------------------------------------------
+           Production day
+        --------------------------------------------- */
+
+        const start =
+            productionStart();
+
+
+        const now =
+            new Date();
+
+
+        const todayRows =
+            rows.filter(
+                row =>
+                    row._time >= start &&
+                    row._time <= now
+            );
+
+
+        /* ---------------------------------------------
+           Latest record
+        --------------------------------------------- */
+
+        const latest =
+            rows
+            .slice()
+            .sort(
+                (a,b)=>
+                    b._time-a._time
+            )[0];
+
+
+        /* ---------------------------------------------
+           Total
+           
+           Mould_count is cumulative count.
+           Use latest count.
+        --------------------------------------------- */
+
+        let total = 0;
+
+        if(todayRows.length){
+
+            total =
+                Math.max(
+                    ...todayRows.map(
+                        r=>r._count
+                    )
+                );
+
+        }
+
+
+        /* ---------------------------------------------
+           THIS HOUR
+        --------------------------------------------- */
+
+        const currentHour =
+            new Date();
+
+        currentHour.setMinutes(
+            0,0,0
+        );
+
+
+        const nextHour =
+            new Date(
+                currentHour
+            );
+
+        nextHour.setHours(
+            nextHour.getHours()+1
+        );
+
+
+        const thisHourRows =
+            todayRows.filter(
+                row =>
+                    row._time >= currentHour &&
+                    row._time < nextHour
+            );
+
+
+        const thisHour =
+            thisHourRows.length;
+
+
+        /* ---------------------------------------------
+           PREVIOUS HOUR
+        --------------------------------------------- */
+
+        const previousHour =
+            new Date(
+                currentHour
+            );
+
+        previousHour.setHours(
+            previousHour.getHours()-1
+        );
+
+
+        const previousHourRows =
+            todayRows.filter(
+                row =>
+                    row._time >= previousHour &&
+                    row._time < currentHour
+            );
+
+
+        const previousHour =
+            previousHourRows.length;
+
+
+        /* ---------------------------------------------
+           HOURLY GRAPH
+        --------------------------------------------- */
+
+        const hourly =
+            Array(24).fill(0);
+
+
+        todayRows.forEach(row=>{
+
+            const h =
+                row._time.getHours();
+
+            hourly[h]++;
+
+        });
+
+
+        /* ---------------------------------------------
+           Average
+        --------------------------------------------- */
+
+        const hoursPassed =
+            Math.max(
+                1,
+                Math.ceil(
+                    (now-start)/3600000
+                )
+            );
+
+
+        const average =
+            total / hoursPassed;
+
+
+        /* ---------------------------------------------
+           DISPLAY
+        --------------------------------------------- */
+
+        put(
+            "total",
+            total
+        );
+
+        put(
+            "sTotal",
+            total
+        );
+
+        put(
+            "hour",
+            thisHour
+        );
+
+        put(
+            "prev",
+            previousHour
+        );
+
+        put(
+            "avg",
+            average.toFixed(1)
+        );
+
+
+        /* ---------------------------------------------
+           Machine
+        --------------------------------------------- */
+
+        put(
+            "machine",
+            latest.Machine_name ||
+            "--"
+        );
+
+
+        /* ---------------------------------------------
+           Shift
+        --------------------------------------------- */
+
+        put(
+            "shift",
+            latest.Shift ||
+            "--"
+        );
+
+
+        /* ---------------------------------------------
+           Status
+        --------------------------------------------- */
+
+        const status =
+            latest.Status ||
+            "STOPPED";
+
+
+        put(
+            "status",
+            status
+        );
+
+
+        const machineStatus =
+            document.getElementById(
+                "machineStatus"
+            );
+
+
+        machineStatus.textContent =
+            "SCADA : "+status;
+
+
+        if(
+            String(status)
+            .toUpperCase()
+            === "RUNNING"
+        ){
+
+            machineStatus.className =
+                "badge green";
+
+        }else{
+
+            machineStatus.className =
+                "badge red";
+
+        }
+
+
+        /* ---------------------------------------------
+           Last mould
+        --------------------------------------------- */
+
+        if(latest._time){
+
+            put(
+                "lasttime",
+                latest._time.toLocaleTimeString()
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           Cloud update
+        --------------------------------------------- */
+
+        if(latest.Update_at){
+
+            put(
+                "updated",
+                latest._time.toLocaleString()
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           Sensor / Cycle
+           Current table doesn't contain these fields
+        --------------------------------------------- */
+
+        put(
+            "sensor",
+            "--"
+        );
+
+        put(
+            "cycle",
+            "--"
+        );
+
+
+        /* ---------------------------------------------
+           Connection
+        --------------------------------------------- */
+
+        const connection =
+            document.getElementById(
+                "connection"
+            );
+
+
+        connection.className =
+            "badge green";
+
+
+        connection.textContent =
+            "SUPABASE : CONNECTED";
+
+
+        /* ---------------------------------------------
+           Clock
+        --------------------------------------------- */
+
+        put(
+            "clock",
+            new Date().toLocaleTimeString()
+        );
+
+
+        /* ---------------------------------------------
+           Graph
+        --------------------------------------------- */
+
+        drawGraph(hourly);
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        const connection =
+            document.getElementById(
+                "connection"
+            );
+
+
+        connection.className =
+            "badge red";
+
+
+        connection.textContent =
+            "SUPABASE : ERROR";
+
+
+        put(
+            "machineStatus",
+            "SCADA : CLOUD ERROR"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   START
+   ===================================================== */
+
+refresh();
+
+setInterval(
+    refresh,
+    2000
+);
+
+</script>
+
+</body>
+</html>
