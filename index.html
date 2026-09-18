@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>MOULD COUNTER SCADA</title>
 
 <style>
+
 *{
     box-sizing:border-box;
 }
@@ -87,7 +88,7 @@ body{
 .card h3{
     text-align:center;
     color:#21d8ff;
-    font-size:12px;
+    font-size:13px;
     margin:0 0 10px;
 }
 
@@ -115,32 +116,27 @@ body{
     grid-column:1/-1;
 }
 
-.gauge{
-    height:16px;
-    border:1px solid #30424b;
-    border-radius:10px;
-    overflow:hidden;
-    margin-top:10px;
-}
-
-.gauge-bar{
-    height:100%;
-    width:0%;
-    background:#19d83b;
+.row{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 2px;
+    border-bottom:1px solid #1d2a30;
 }
 
 .chart{
-    height:250px;
+    height:260px;
     display:flex;
     align-items:flex-end;
     gap:3px;
-    padding:15px 2px 40px;
+    padding:10px 2px 40px;
     border-bottom:1px solid #34444c;
+    overflow:hidden;
 }
 
 .bar-wrap{
     height:100%;
     flex:1;
+    min-width:8px;
     position:relative;
     display:flex;
     align-items:flex-end;
@@ -148,9 +144,10 @@ body{
 }
 
 .bar{
-    width:80%;
+    width:75%;
     background:#19d83b;
     min-height:2px;
+    border-radius:2px 2px 0 0;
 }
 
 .bar-value{
@@ -168,11 +165,30 @@ body{
     white-space:nowrap;
 }
 
-.row{
-    display:flex;
-    justify-content:space-between;
-    padding:9px 2px;
-    border-bottom:1px solid #1d2a30;
+.records{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+}
+
+.records th,
+.records td{
+    border:1px solid #30424b;
+    padding:7px;
+    text-align:center;
+}
+
+.records th{
+    color:#21d8ff;
+    background:#0b171d;
+}
+
+.records td{
+    color:#eaf2f5;
+}
+
+.valid{
+    color:#00ff4c !important;
 }
 
 .footer{
@@ -183,18 +199,46 @@ body{
 }
 
 @media(max-width:800px){
+
     .cards{
         grid-template-columns:repeat(2,1fr);
     }
-}
 
-@media(max-width:430px){
     .status-row{
-        grid-template-columns:1fr 1fr;
+        grid-template-columns:repeat(2,1fr);
     }
 
     .status-row .badge:last-child{
         grid-column:1/-1;
+    }
+
+}
+
+@media(max-width:430px){
+
+    .container{
+        padding:8px;
+    }
+
+    .title{
+        font-size:24px;
+    }
+
+    .subtitle{
+        font-size:10px;
+    }
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+        gap:8px;
+    }
+
+    .card{
+        padding:10px;
+    }
+
+    .card h3{
+        font-size:11px;
     }
 
     .big{
@@ -204,201 +248,336 @@ body{
     .value{
         font-size:25px;
     }
+
+    .records{
+        font-size:10px;
+    }
+
+    .records th,
+    .records td{
+        padding:5px 3px;
+    }
+
 }
+
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <div class="title">MOULD COUNTER SCADA</div>
+
+    <div class="title">
+        MOULD COUNTER SCADA
+    </div>
+
     <div class="subtitle">
         MAXWELL AUTO COMPONENTS • CLOUD MOBILE SCADA
     </div>
+
 </div>
+
 
 <div class="container">
 
-    <div class="status-row">
+<!-- STATUS -->
 
-        <div class="badge" id="connection">
-            SUPABASE : CONNECTING
-        </div>
+<div class="status-row">
 
-        <div class="badge" id="machineStatus">
-            SCADA : --
-        </div>
+    <div class="badge green" id="connection">
+        SUPABASE : CONNECTING
+    </div>
 
-        <div class="badge yellow" id="clock">
-            --
-        </div>
+    <div class="badge" id="scada">
+        SCADA : --
+    </div>
+
+    <div class="badge yellow" id="clock">
+        --
+    </div>
+
+</div>
+
+
+<!-- MAIN CARDS -->
+
+<div class="cards">
+
+
+<div class="card">
+
+    <h3>TOTAL MOULD COUNT</h3>
+
+    <div class="big" id="total">
+        0
+    </div>
+
+    <div class="small">
+        TODAY PRODUCTION
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h3>THIS HOUR</h3>
+
+    <div class="value" id="thisHour">
+        0
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h3>AVERAGE / HOUR</h3>
+
+    <div class="value" id="average">
+        0.0
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h3>PREVIOUS HOUR</h3>
+
+    <div class="value" id="previousHour">
+        0
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h3>SHIFT</h3>
+
+    <div class="value" id="shift">
+        --
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h3>LAST MOULD</h3>
+
+    <div class="value" id="lastMould">
+        --
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h3>MOULD RATE</h3>
+
+    <div class="value" id="rate">
+        0 / HR
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h3>STATUS</h3>
+
+    <div class="value" id="status">
+        --
+    </div>
+
+</div>
+
+
+<!-- SHIFT -->
+
+<div class="card full">
+
+    <h3>SHIFT WISE COUNT</h3>
+
+    <div class="row">
+        <span>SHIFT-1 (08:30 AM - 05:30 PM)</span>
+        <b id="shift1">0</b>
+    </div>
+
+    <div class="row">
+        <span>SHIFT-2 (05:30 PM - 01:00 AM)</span>
+        <b id="shift2">0</b>
+    </div>
+
+    <div class="row">
+        <span>SHIFT-3 (01:00 AM - 08:30 AM)</span>
+        <b id="shift3">0</b>
+    </div>
+
+</div>
+
+
+<!-- GRAPH -->
+
+<div class="card full">
+
+    <h3>
+        MOULD COUNT TREND (TODAY)
+    </h3>
+
+    <div
+        class="chart"
+        id="chart">
+    </div>
+
+</div>
+
+
+<!-- LAST 10 -->
+
+<div class="card full">
+
+    <h3>
+        LAST 10 MOULD RECORDS
+    </h3>
+
+    <div style="overflow-x:auto">
+
+        <table class="records">
+
+            <thead>
+
+                <tr>
+                    <th>No.</th>
+                    <th>MOULD COUNT</th>
+                    <th>MOULD TIME</th>
+                    <th>SHIFT</th>
+                    <th>STATUS</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="records">
+
+                <tr>
+                    <td colspan="5">
+                        Waiting...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
 
     </div>
 
-    <div class="cards">
+</div>
 
-        <div class="card">
-            <h3>TOTAL MOULD COUNT</h3>
-            <div class="big" id="total">0</div>
-            <div class="small">
-                TODAY PRODUCTION
-            </div>
-        </div>
 
-        <div class="card">
-            <h3>THIS HOUR</h3>
-            <div class="value" id="thisHour">0</div>
-        </div>
+<!-- SUMMARY -->
 
-        <div class="card">
-            <h3>AVERAGE / HOUR</h3>
-            <div class="value" id="average">0.0</div>
-        </div>
+<div class="card full">
 
-        <div class="card">
-            <h3>PREVIOUS HOUR</h3>
-            <div class="value" id="previousHour">0</div>
-        </div>
+    <h3>
+        PRODUCTION SUMMARY
+    </h3>
 
-        <div class="card">
-            <h3>SHIFT</h3>
-            <div class="value" id="shift">--</div>
-        </div>
-
-        <div class="card">
-            <h3>SENSOR</h3>
-            <div class="value" id="sensor">OFF</div>
-
-            <div class="gauge">
-                <div class="gauge-bar" id="voltageBar"></div>
-            </div>
-
-            <div class="small" id="voltage">
-                --
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>LAST MOULD</h3>
-            <div class="value" id="lastMould">
-                --
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>MOULD RATE</h3>
-            <div class="value" id="rate">
-                --
-            </div>
-        </div>
-
-        <div class="card full">
-
-            <h3>
-                PRODUCTION DAY : 08:30 AM → NEXT DAY 08:30 AM
-            </h3>
-
-            <div class="chart" id="chart">
-            </div>
-
-            <div class="small">
-                HOURLY MOULD PRODUCTION
-            </div>
-
-        </div>
-
-        <div class="card full">
-
-            <h3>PRODUCTION SUMMARY</h3>
-
-            <div class="row">
-                <span>Machine</span>
-                <b id="machine">--</b>
-            </div>
-
-            <div class="row">
-                <span>Total Mould</span>
-                <b id="summaryTotal">0</b>
-            </div>
-
-            <div class="row">
-                <span>Status</span>
-                <b id="status">--</b>
-            </div>
-
-            <div class="row">
-                <span>Last Cloud Update</span>
-                <b id="updated">--</b>
-            </div>
-
-        </div>
-
+    <div class="row">
+        <span>Machine</span>
+        <b id="machine">--</b>
     </div>
 
-    <div class="footer">
-        AUTO REFRESH : 2 SEC • SUPABASE CLOUD
+    <div class="row">
+        <span>Today Total</span>
+        <b id="summaryTotal">0</b>
     </div>
+
+    <div class="row">
+        <span>Last Cloud Update</span>
+        <b id="updated">--</b>
+    </div>
+
+</div>
+
+
+</div>
+
+
+<div class="footer">
+
+    AUTO REFRESH : 2 SEC • SUPABASE CLOUD
+
+</div>
 
 </div>
 
 
 <script>
 
-/* =====================================================
-   SUPABASE SETTINGS
-   ===================================================== */
+/* =================================================
+   SUPABASE
+   ================================================= */
 
 const SUPABASE_URL =
 "https://jdidxmwjuecedwmylcqc.supabase.co";
 
+
 /*
-   IMPORTANT:
-   Paste your CURRENT Supabase PUBLISHABLE KEY here.
+   Paste CURRENT PUBLISHABLE KEY here.
+
    Do NOT use secret/service_role key.
 */
 
 const SUPABASE_KEY =
 "sb_publishable_nYuMBxR0GyXF3TQhjWvyRg_fdU82MnV";
 
-const TABLE = "Mould_counter";
+
+const TABLE =
+"Mould_counter";
 
 
-/* =====================================================
-   HTML HELPER
-   ===================================================== */
+/* =================================================
+   HELPER
+   ================================================= */
 
 function setText(id,value){
 
-    const el = document.getElementById(id);
+    const el =
+        document.getElementById(id);
 
     if(el){
-        el.textContent = value;
+        el.textContent =
+            value;
     }
 
 }
 
 
-/* =====================================================
-   PRODUCTION DAY
-   08:30 AM -> NEXT DAY 08:30 AM
-   ===================================================== */
+/* =================================================
+   PRODUCTION DAY START
+   08:30 AM
+   ================================================= */
 
 function getProductionStart(){
 
-    const now = new Date();
+    const now =
+        new Date();
 
-    const start = new Date(now);
+    const start =
+        new Date(now);
 
-    start.setHours(8,30,0,0);
-
-    /*
-       Before 08:30:
-       production day belongs to yesterday
-    */
+    start.setHours(
+        8,30,0,0
+    );
 
     if(now < start){
 
-        start.setDate(start.getDate()-1);
+        start.setDate(
+            start.getDate()-1
+        );
 
     }
 
@@ -407,135 +586,84 @@ function getProductionStart(){
 }
 
 
-/* =====================================================
-   TIME FORMAT
-   ===================================================== */
+/* =================================================
+   FORMAT TIME
+   ================================================= */
 
-function timeOnly(date){
+function formatTime(value){
 
-    return date.toLocaleTimeString([],{
-        hour:"2-digit",
-        minute:"2-digit",
-        second:"2-digit"
-    });
+    if(!value)
+        return "--";
 
-}
+    const d =
+        new Date(value);
 
-
-/* =====================================================
-   HOURLY GRAPH
-   ===================================================== */
-
-function createChart(rows){
-
-    const productionStart =
-        getProductionStart();
-
-    const values =
-        new Array(24).fill(0);
-
-    /*
-       Count mould records hour by hour
-    */
-
-    rows.forEach(row=>{
-
-        const t =
-            new Date(row.Update_at);
-
-        const diff =
-            t - productionStart;
-
-        const hour =
-            Math.floor(diff / 3600000);
-
-        if(hour >= 0 && hour < 24){
-
-            values[hour]++;
-
+    return d.toLocaleTimeString(
+        [],
+        {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit"
         }
-
-    });
-
-
-    const max =
-        Math.max(1,...values);
-
-    let html = "";
-
-
-    values.forEach((value,index)=>{
-
-        const height =
-            Math.max(3,(value/max)*190);
-
-        const labelDate =
-            new Date(
-                productionStart.getTime()
-                + index*3600000
-            );
-
-        const label =
-            labelDate.toLocaleTimeString([],{
-                hour:"2-digit",
-                minute:"2-digit"
-            });
-
-
-        html += `
-
-        <div class="bar-wrap">
-
-            <div
-                class="bar"
-                style="height:${height}px">
-            </div>
-
-            <div
-                class="bar-value"
-                style="bottom:${height+2}px">
-                ${value}
-            </div>
-
-            <div class="bar-label">
-                ${label}
-            </div>
-
-        </div>
-
-        `;
-
-    });
-
-
-    document.getElementById("chart").innerHTML =
-        html;
+    );
 
 }
 
 
-/* =====================================================
-   SUPABASE DATA
-   ===================================================== */
+/* =================================================
+   SHIFT
+   ================================================= */
+
+function getShift(date){
+
+    const h =
+        date.getHours();
+
+    const m =
+        date.getMinutes();
+
+    const minutes =
+        h*60+m;
+
+
+    if(
+        minutes >= 510 &&
+        minutes < 1050
+    ){
+
+        return "SHIFT-1";
+
+    }
+
+
+    if(
+        minutes >= 1050 ||
+        minutes < 60
+    ){
+
+        return "SHIFT-2";
+
+    }
+
+
+    return "SHIFT-3";
+
+}
+
+
+/* =================================================
+   LOAD DATA
+   ================================================= */
 
 async function refreshSCADA(){
 
     try{
 
-        const start =
-            getProductionStart();
-
-
         /*
-           ISO time for Supabase filter
-        */
+           Read records directly.
 
-        const startISO =
-            start.toISOString();
-
-
-        /*
-           Read current production-day records
+           No Update_at URL filter.
+           JavaScript handles production-day filter.
         */
 
         const url =
@@ -543,26 +671,28 @@ async function refreshSCADA(){
             "/rest/v1/" +
             TABLE +
             "?select=id,Machine_name,Mould_count,Shift,Status,Update_at" +
-            "&Update_at=gte." +
-            encodeURIComponent(startISO) +
-            "&order=Update_at.asc";
+            "&order=Update_at.asc" +
+            "&limit=1000";
 
 
         const response =
-            await fetch(url,{
+            await fetch(
+                url,
+                {
+                    method:"GET",
 
-                method:"GET",
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
 
-                headers:{
-                    "apikey":SUPABASE_KEY,
-                    "Authorization":
-                        "Bearer " +
-                        SUPABASE_KEY
-                },
+                        "Authorization":
+                            "Bearer " +
+                            SUPABASE_KEY
+                    },
 
-                cache:"no-store"
-
-            });
+                    cache:"no-store"
+                }
+            );
 
 
         if(!response.ok){
@@ -575,35 +705,89 @@ async function refreshSCADA(){
         }
 
 
-        const rows =
+        const allRows =
             await response.json();
 
 
-        /*
-           No records
-        */
+        /* =========================================
+           PRODUCTION DAY FILTER
+           ========================================= */
 
-        if(!rows.length){
+        const start =
+            getProductionStart();
+
+
+        const rows =
+            allRows.filter(row=>{
+
+                const t =
+                    new Date(
+                        row.Update_at
+                    );
+
+                return t >= start;
+
+            });
+
+
+        /* =========================================
+           CONNECTION
+           ========================================= */
+
+        setText(
+            "connection",
+            "SUPABASE : CONNECTED"
+        );
+
+        document
+            .getElementById("connection")
+            .className =
+            "badge green";
+
+
+        /* =========================================
+           NO DATA
+           ========================================= */
+
+        if(rows.length === 0){
 
             setText("total","0");
             setText("thisHour","0");
             setText("previousHour","0");
             setText("average","0.0");
+            setText("shift","--");
+            setText("lastMould","--");
+            setText("rate","0 / HR");
+            setText("status","WAITING");
             setText("machine","--");
             setText("summaryTotal","0");
-            setText("shift","--");
-            setText("status","WAITING");
-            setText("lastMould","--");
 
-            document.getElementById(
-                "connection"
-            ).textContent =
-                "SUPABASE : CONNECTED";
+            setText("shift1","0");
+            setText("shift2","0");
+            setText("shift3","0");
 
-            document.getElementById(
-                "connection"
-            ).className =
-                "badge green";
+            setText(
+                "scada",
+                "SCADA : WAITING"
+            );
+
+            document
+                .getElementById("scada")
+                .className =
+                "badge yellow";
+
+
+            document
+                .getElementById("records")
+                .innerHTML =
+                `
+                <tr>
+                    <td colspan="5">
+                        No production data
+                    </td>
+                </tr>
+                `;
+
 
             createChart([]);
 
@@ -612,21 +796,28 @@ async function refreshSCADA(){
         }
 
 
-        /*
-           Latest record
-        */
+        /* =========================================
+           LATEST RECORD
+           ========================================= */
 
         const latest =
             rows[rows.length-1];
 
 
-        /*
-           Current total
-           Mould_count is cumulative count
-        */
+        const latestTime =
+            new Date(
+                latest.Update_at
+            );
+
+
+        /* =========================================
+           TOTAL
+           ========================================= */
 
         const total =
-            Number(latest.Mould_count || 0);
+            Number(
+                latest.Mould_count || 0
+            );
 
 
         setText(
@@ -640,9 +831,9 @@ async function refreshSCADA(){
         );
 
 
-        /*
-           Machine
-        */
+        /* =========================================
+           MACHINE
+           ========================================= */
 
         setText(
             "machine",
@@ -650,57 +841,67 @@ async function refreshSCADA(){
         );
 
 
-        /*
-           Shift
-        */
+        /* =========================================
+           SHIFT
+           ========================================= */
 
         setText(
             "shift",
-            latest.Shift || "--"
+            latest.Shift ||
+            getShift(latestTime)
         );
 
 
-        /*
-           Status
-        */
+        /* =========================================
+           STATUS
+           ========================================= */
+
+        const status =
+            latest.Status || "--";
+
 
         setText(
             "status",
-            latest.Status || "--"
+            status
         );
 
 
-        /*
-           Last mould
-        */
-
-        const lastTime =
-            new Date(latest.Update_at);
+        /* =========================================
+           LAST MOULD
+           ========================================= */
 
         setText(
             "lastMould",
-            timeOnly(lastTime)
+            formatTime(
+                latest.Update_at
+            )
         );
 
 
-        /*
-           This hour
-        */
+        /* =========================================
+           CURRENT HOUR
+           ========================================= */
 
         const now =
             new Date();
 
+
         const hourStart =
             new Date(now);
 
-        hourStart.setMinutes(0,0,0);
+
+        hourStart.setMinutes(
+            0,0,0
+        );
 
 
         const thisHourRows =
             rows.filter(row=>{
 
                 const t =
-                    new Date(row.Update_at);
+                    new Date(
+                        row.Update_at
+                    );
 
                 return t >= hourStart;
 
@@ -713,9 +914,9 @@ async function refreshSCADA(){
         );
 
 
-        /*
-           Previous hour
-        */
+        /* =========================================
+           PREVIOUS HOUR
+           ========================================= */
 
         const previousStart =
             new Date(
@@ -728,7 +929,9 @@ async function refreshSCADA(){
             rows.filter(row=>{
 
                 const t =
-                    new Date(row.Update_at);
+                    new Date(
+                        row.Update_at
+                    );
 
                 return (
                     t >= previousStart &&
@@ -744,19 +947,19 @@ async function refreshSCADA(){
         );
 
 
-        /*
-           Average per hour
-        */
+        /* =========================================
+           AVERAGE / HOUR
+           ========================================= */
 
-        const elapsedHours =
+        const elapsed =
             Math.max(
                 1,
-                (now - start) / 3600000
+                (now-start)/3600000
             );
 
 
         const average =
-            total / elapsedHours;
+            total/elapsed;
 
 
         setText(
@@ -765,112 +968,194 @@ async function refreshSCADA(){
         );
 
 
-        /*
-           Mould rate
-        */
+        /* =========================================
+           RATE
+           ========================================= */
 
-        if(thisHourRows.length > 0){
+        setText(
+            "rate",
+            thisHourRows.length +
+            " / HR"
+        );
 
-            setText(
-                "rate",
-                thisHourRows.length +
-                " / HR"
+
+        /* =========================================
+           CLOUD UPDATE
+           ========================================= */
+
+        setText(
+            "updated",
+            latestTime.toLocaleString()
+        );
+
+
+        /* =========================================
+           SCADA STATUS
+           ========================================= */
+
+        setText(
+            "scada",
+            "SCADA : " +
+            status
+        );
+
+
+        const scadaEl =
+            document.getElementById(
+                "scada"
             );
+
+
+        if(
+            String(status)
+            .toUpperCase()
+            .includes("RUN")
+        ){
+
+            scadaEl.className =
+                "badge green";
 
         }
         else{
 
-            setText(
-                "rate",
-                "0 / HR"
-            );
+            scadaEl.className =
+                "badge yellow";
 
         }
 
 
-        /*
-           Cloud update
-        */
+        /* =========================================
+           SHIFT-WISE
+           ========================================= */
+
+        let s1 = 0;
+        let s2 = 0;
+        let s3 = 0;
+
+
+        rows.forEach(row=>{
+
+            const t =
+                new Date(
+                    row.Update_at
+                );
+
+
+            const shift =
+                String(
+                    row.Shift ||
+                    getShift(t)
+                ).toUpperCase();
+
+
+            if(
+                shift.includes("SHIFT-1") ||
+                shift === "1"
+            ){
+
+                s1++;
+
+            }
+            else if(
+                shift.includes("SHIFT-2") ||
+                shift === "2"
+            ){
+
+                s2++;
+
+            }
+            else if(
+                shift.includes("SHIFT-3") ||
+                shift === "3"
+            ){
+
+                s3++;
+
+            }
+
+        });
+
 
         setText(
-            "updated",
-            lastTime.toLocaleString()
-        );
-
-
-        /*
-           SCADA status
-        */
-
-        const running =
-            String(
-                latest.Status || ""
-            ).toUpperCase() === "RUNNING";
-
-
-        const machineStatus =
-            document.getElementById(
-                "machineStatus"
-            );
-
-
-        machineStatus.className =
-            running
-            ? "badge green"
-            : "badge red";
-
-
-        machineStatus.textContent =
-            "SCADA : " +
-            (latest.Status || "STOPPED");
-
-
-        /*
-           Connection
-        */
-
-        const connection =
-            document.getElementById(
-                "connection"
-            );
-
-
-        connection.className =
-            "badge green";
-
-        connection.textContent =
-            "SUPABASE : CONNECTED";
-
-
-        /*
-           Sensor
-           
-           Current table does not contain
-           sensor voltage/sensor active columns.
-        */
-
-        setText(
-            "sensor",
-            "--"
+            "shift1",
+            s1
         );
 
         setText(
-            "voltage",
-            "--"
+            "shift2",
+            s2
         );
 
-        document.getElementById(
-            "voltageBar"
-        ).style.width = "0%";
+        setText(
+            "shift3",
+            s3
+        );
 
 
-        /*
-           Chart
-        */
+        /* =========================================
+           LAST 10 RECORDS
+           ========================================= */
+
+        const last10 =
+            rows
+            .slice(-10)
+            .reverse();
+
+
+        let html = "";
+
+
+        last10.forEach(
+            (row,index)=>{
+
+                html += `
+
+                <tr>
+
+                    <td>
+                        ${index+1}
+                    </td>
+
+                    <td>
+                        ${row.Mould_count ?? "--"}
+                    </td>
+
+                    <td>
+                        ${formatTime(
+                            row.Update_at
+                        )}
+                    </td>
+
+                    <td>
+                        ${row.Shift ?? "--"}
+                    </td>
+
+                    <td class="valid">
+                        ${row.Status ?? "--"}
+                    </td>
+
+                </tr>
+
+                `;
+
+            }
+        );
+
+
+        document
+            .getElementById("records")
+            .innerHTML =
+            html;
+
+
+        /* =========================================
+           GRAPH
+           ========================================= */
 
         createChart(rows);
 
     }
+
 
     catch(error){
 
@@ -880,28 +1165,145 @@ async function refreshSCADA(){
         );
 
 
-        const connection =
-            document.getElementById(
-                "connection"
-            );
+        setText(
+            "connection",
+            "SUPABASE : ERROR"
+        );
 
 
-        connection.className =
+        document
+            .getElementById("connection")
+            .className =
             "badge red";
-
-
-        connection.textContent =
-            "SUPABASE : ERROR";
-
 
     }
 
 }
 
 
-/* =====================================================
+/* =================================================
+   GRAPH
+   ================================================= */
+
+function createChart(rows){
+
+    const start =
+        getProductionStart();
+
+
+    const values =
+        new Array(24).fill(0);
+
+
+    rows.forEach(row=>{
+
+        const t =
+            new Date(
+                row.Update_at
+            );
+
+
+        const diff =
+            t-start;
+
+
+        const hour =
+            Math.floor(
+                diff/3600000
+            );
+
+
+        if(
+            hour >= 0 &&
+            hour < 24
+        ){
+
+            values[hour]++;
+
+        }
+
+    });
+
+
+    const max =
+        Math.max(
+            1,
+            ...values
+        );
+
+
+    let html = "";
+
+
+    values.forEach(
+        (value,index)=>{
+
+            const height =
+                Math.max(
+                    3,
+                    (value/max)*190
+                );
+
+
+            const labelDate =
+                new Date(
+                    start.getTime() +
+                    index*3600000
+                );
+
+
+            const label =
+                labelDate.toLocaleTimeString(
+                    [],
+                    {
+                        hour:"2-digit",
+                        minute:"2-digit"
+                    }
+                );
+
+
+            html += `
+
+            <div class="bar-wrap">
+
+                <div
+                    class="bar"
+                    style="
+                    height:${height}px;
+                    ">
+                </div>
+
+                <div
+                    class="bar-value"
+                    style="
+                    bottom:${height+2}px;
+                    ">
+                    ${value}
+                </div>
+
+                <div class="bar-label">
+                    ${label}
+                </div>
+
+            </div>
+
+            `;
+
+        }
+    );
+
+
+    document
+        .getElementById("chart")
+        .innerHTML =
+        html;
+
+}
+
+
+/* =================================================
    CLOCK
-   ===================================================== */
+   ================================================= */
 
 function updateClock(){
 
@@ -913,18 +1315,16 @@ function updateClock(){
 }
 
 
-/* =====================================================
+/* =================================================
    START
-   ===================================================== */
+   ================================================= */
 
 refreshSCADA();
 
 updateClock();
 
 
-/*
-   Live cloud refresh
-*/
+/* Live data every 2 seconds */
 
 setInterval(
     refreshSCADA,
@@ -932,9 +1332,7 @@ setInterval(
 );
 
 
-/*
-   Clock refresh
-*/
+/* Clock every second */
 
 setInterval(
     updateClock,
