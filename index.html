@@ -7,51 +7,43 @@
 
 <style>
 *{box-sizing:border-box}
-
 html,body{
     margin:0;
     padding:0;
     background:#02070a;
     color:#eee;
-    font-family:Arial,sans-serif;
+    font-family:Arial,sans-serif
 }
-
 body{overflow-x:hidden}
-
 .page{
     width:100%;
     max-width:900px;
     margin:auto;
-    padding:10px;
+    padding:10px
 }
 
-/* HEADER */
 .header{
     text-align:center;
     padding:12px 5px;
-    border-bottom:2px solid #18dfff;
+    border-bottom:2px solid #18dfff
 }
-
 .title{
     color:#18dfff;
     font-size:28px;
-    font-weight:bold;
+    font-weight:bold
 }
-
 .subtitle{
     color:#8d9aa0;
     font-size:14px;
-    margin-top:5px;
+    margin-top:5px
 }
 
-/* STATUS */
 .status-row{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:10px;
-    margin-top:12px;
+    margin-top:12px
 }
-
 .status-box{
     background:#050d11;
     border:1px solid #2b3b43;
@@ -59,13 +51,11 @@ body{overflow-x:hidden}
     padding:15px 5px;
     text-align:center;
     font-size:17px;
-    font-weight:bold;
+    font-weight:bold
 }
-
 .connected{color:#00ff42}
 .running{color:#ffe500}
 
-/* CLOCK */
 .clock{
     background:#050d11;
     border:1px solid #2b3b43;
@@ -75,73 +65,63 @@ body{overflow-x:hidden}
     font-size:23px;
     font-weight:bold;
     padding:13px;
-    margin-top:10px;
+    margin-top:10px
 }
 
-/* CARDS */
 .cards{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:10px;
-    margin-top:10px;
+    margin-top:10px
 }
-
 .card{
     background:#050d11;
     border:1px solid #263942;
     border-radius:12px;
     padding:17px 10px;
     text-align:center;
-    min-height:125px;
+    min-height:125px
 }
-
 .card-title{
     color:#18dfff;
     font-size:15px;
-    font-weight:bold;
+    font-weight:bold
 }
-
 .big{
     color:#18dfff;
     font-size:40px;
     font-weight:bold;
-    margin-top:15px;
+    margin-top:15px
 }
-
 .green{color:#00ff42}
-
 .small{
     color:#8d9aa0;
     font-size:12px;
-    margin-top:8px;
+    margin-top:8px
 }
 
-/* GRAPH */
 .graph-panel{
     background:#050d11;
     border:1px solid #263942;
     border-radius:12px;
     margin-top:10px;
-    padding:12px;
+    padding:12px
 }
-
 .section-title{
     color:#18dfff;
     text-align:center;
     font-size:17px;
     font-weight:bold;
-    margin-bottom:8px;
+    margin-bottom:8px
 }
-
 .graph{
     height:300px;
     display:flex;
     align-items:flex-end;
     gap:2px;
     padding:15px 2px 35px;
-    border-bottom:1px solid #34444c;
+    border-bottom:1px solid #34444c
 }
-
 .bar-wrap{
     flex:1;
     height:100%;
@@ -149,80 +129,62 @@ body{overflow-x:hidden}
     display:flex;
     justify-content:flex-end;
     align-items:center;
-    flex-direction:column;
+    flex-direction:column
 }
-
 .bar{
     width:85%;
     min-height:2px;
     background:#16d83b;
-    border-radius:3px 3px 0 0;
+    border-radius:3px 3px 0 0
 }
-
 .bar-value{
     position:absolute;
     color:#fff;
     font-size:9px;
-    font-weight:bold;
+    font-weight:bold
 }
-
 .bar-label{
     position:absolute;
     bottom:-30px;
     color:#9aa5aa;
     font-size:7px;
     transform:rotate(-45deg);
-    white-space:nowrap;
+    white-space:nowrap
 }
 
-/* RECORDS */
-.records-panel{
+.records-panel,.summary{
     background:#050d11;
     border:1px solid #263942;
     border-radius:12px;
     margin-top:10px;
-    padding:10px;
+    padding:10px
 }
-
 .table-container{
     width:100%;
-    overflow-x:auto;
+    overflow-x:auto
 }
-
 table{
     width:100%;
     border-collapse:collapse;
     table-layout:fixed;
     min-width:560px;
-    font-size:13px;
+    font-size:13px
 }
-
 th{
     background:#0b171d;
     color:#18dfff;
     border:1px solid #34444c;
-    padding:9px 5px;
+    padding:9px 5px
 }
-
 td{
     border:1px solid #34444c;
     padding:8px 5px;
     text-align:center;
-    white-space:nowrap;
+    white-space:nowrap
 }
-
 .valid{
     color:#00ff42;
-    font-weight:bold;
-}
-
-/* SUMMARY */
-.summary{
-    background:#050d11;
-    border:1px solid #263942;
-    border-radius:12px;
-    margin-top:10px;
-    padding:12px;
+    font-weight:bold
 }
 
 .summary-row{
@@ -230,58 +192,47 @@ td{
     justify-content:space-between;
     padding:11px 3px;
     border-bottom:1px solid #26343a;
-    font-size:15px;
+    font-size:15px
 }
-
-.summary-row:last-child{
-    border-bottom:0;
-}
-
+.summary-row:last-child{border-bottom:0}
 .summary-value{
     font-weight:bold;
-    color:#eee;
+    color:#eee
 }
-
 .footer{
     text-align:center;
     color:#707d82;
     font-size:12px;
-    padding:18px 5px;
+    padding:18px 5px
 }
 
-/* MOBILE */
 @media(max-width:600px){
 
     .page{padding:7px}
-
     .title{font-size:23px}
-
     .subtitle{font-size:11px}
 
     .status-box{
         font-size:14px;
-        padding:13px 4px;
+        padding:13px 4px
     }
 
     .clock{font-size:20px}
 
     .card{
         min-height:115px;
-        padding:14px 5px;
+        padding:14px 5px
     }
 
     .card-title{font-size:13px}
-
     .big{font-size:34px}
 
-    .table-container{
-        overflow:visible;
-    }
+    .table-container{overflow:visible}
 
     table{
         min-width:0;
         width:100%;
-        table-layout:auto;
+        table-layout:auto
     }
 
     table thead{display:none}
@@ -297,7 +248,7 @@ td{
         border:1px solid #34444c;
         border-radius:8px;
         overflow:hidden;
-        background:#071116;
+        background:#071116
     }
 
     table tbody td{
@@ -305,7 +256,7 @@ td{
         border-bottom:1px solid #24343b;
         padding:8px 5px;
         font-size:12px;
-        white-space:normal;
+        white-space:normal
     }
 
     table tbody td:nth-child(1){
@@ -317,60 +268,59 @@ td{
         border-right:1px solid #34444c;
         border-bottom:0;
         color:#18dfff;
-        font-weight:bold;
+        font-weight:bold
     }
 
     table tbody td:nth-child(2){
         grid-area:count;
-        text-align:left;
+        text-align:left
     }
 
     table tbody td:nth-child(2)::before{
         content:"MOULD COUNT: ";
         color:#7f9097;
-        font-size:10px;
+        font-size:10px
     }
 
     table tbody td:nth-child(3){
         grid-area:time;
-        text-align:right;
+        text-align:right
     }
 
     table tbody td:nth-child(3)::before{
         content:"TIME: ";
         color:#7f9097;
-        font-size:10px;
+        font-size:10px
     }
 
     table tbody td:nth-child(4){
         grid-area:shift;
         text-align:left;
-        border-bottom:0;
+        border-bottom:0
     }
 
     table tbody td:nth-child(4)::before{
         content:"SHIFT: ";
         color:#7f9097;
-        font-size:10px;
+        font-size:10px
     }
 
     table tbody td:nth-child(5){
         grid-area:status;
         text-align:right;
-        border-bottom:0;
+        border-bottom:0
     }
 
     table tbody td:nth-child(5)::before{
         content:"STATUS: ";
         color:#7f9097;
-        font-size:10px;
+        font-size:10px
     }
 
     .graph{height:300px}
 }
 
 @media(max-width:380px){
-
     .title{font-size:20px}
     .card-title{font-size:12px}
     .big{font-size:31px}
@@ -403,86 +353,57 @@ td{
 
 <div class="clock" id="clock">--</div>
 
-
-<!-- CARDS -->
-
 <div class="cards">
 
     <div class="card">
         <div class="card-title">TOTAL MOULD COUNT</div>
-
         <div class="big green" id="total">0</div>
-
         <div class="small">CURRENT PC COUNT</div>
     </div>
 
-
     <div class="card">
         <div class="card-title">THIS HOUR</div>
-
         <div class="big" id="thisHour">0</div>
-
         <div class="small">MOULDS / HOUR</div>
     </div>
 
-
     <div class="card">
         <div class="card-title">AVERAGE / HOUR</div>
-
         <div class="big" id="average">0.0</div>
-
         <div class="small">PRODUCTION RATE</div>
     </div>
 
-
     <div class="card">
         <div class="card-title">PREVIOUS HOUR</div>
-
         <div class="big" id="previous">0</div>
-
         <div class="small">LAST HOUR</div>
     </div>
 
-
     <div class="card">
         <div class="card-title">SENSOR AI1</div>
-
         <div class="big" id="sensor">--</div>
-
         <div class="small" id="voltage">-- V</div>
     </div>
 
-
     <div class="card">
         <div class="card-title">CYCLE TIME</div>
-
         <div class="big" id="cycle">--</div>
-
         <div class="small">SECONDS</div>
     </div>
 
-
     <div class="card">
         <div class="card-title">SHIFT</div>
-
         <div class="big" id="shift">--</div>
-
         <div class="small">CURRENT SHIFT</div>
     </div>
 
-
     <div class="card">
         <div class="card-title">LAST MOULD</div>
-
         <div class="big" id="lastMould">--</div>
-
         <div class="small">LAST PRODUCTION TIME</div>
     </div>
 
 </div>
-
-
-<!-- GRAPH -->
 
 <div class="graph-panel">
 
@@ -493,9 +414,6 @@ td{
     <div class="graph" id="graph"></div>
 
 </div>
-
-
-<!-- LAST 10 -->
 
 <div class="records-panel">
 
@@ -528,10 +446,8 @@ td{
         </table>
 
     </div>
+
 </div>
-
-
-<!-- SUMMARY -->
 
 <div class="summary">
 
@@ -584,12 +500,11 @@ td{
 
 </div>
 
-
 <script>
 
-/* =================================================
+/* =========================================
    SUPABASE
-   ================================================= */
+   ========================================= */
 
 const SUPABASE_URL =
 "https://jdidxmwjuecedwmylcqc.supabase.co";
@@ -601,15 +516,27 @@ const TABLE =
 "Mould_counter";
 
 
-/* =================================================
+/* =========================================
+   DATE
+   ========================================= */
+
+function localDateString(d){
+
+    return d.getFullYear() +
+    "-" +
+    String(d.getMonth()+1).padStart(2,"0") +
+    "-" +
+    String(d.getDate()).padStart(2,"0");
+}
+
+
+/* =========================================
    TIME
-   ================================================= */
+   ========================================= */
 
 function normalizeCloudTime(value){
 
-    const d = new Date(value);
-
-    return d;
+    return new Date(value);
 }
 
 
@@ -658,13 +585,15 @@ function formatDateTime(value){
 }
 
 
-/* =================================================
+/* =========================================
    CLOCK
-   ================================================= */
+   ========================================= */
 
 function updateClock(){
 
-    document.getElementById("clock").textContent =
+    document
+    .getElementById("clock")
+    .textContent =
     new Date().toLocaleString(
         "en-IN",
         {
@@ -680,12 +609,83 @@ function updateClock(){
 }
 
 
-/* =================================================
+/* =========================================
+   REMOVE DUPLICATE SUPABASE UPLOADS
+
+   Same Record_Date + Mould_count
+   = one production event.
+   ========================================= */
+
+function uniqueProductionRows(rows){
+
+    const map =
+    new Map();
+
+    rows.forEach(
+        function(row){
+
+            const date =
+            String(
+                row.Record_Date || ""
+            );
+
+            const count =
+            String(
+                row.Mould_count ?? ""
+            );
+
+            if(
+                date !== "" &&
+                count !== ""
+            ){
+
+                const key =
+                date +
+                "|" +
+                count;
+
+                if(
+                    !map.has(key)
+                ){
+
+                    map.set(
+                        key,
+                        row
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+
+    return Array
+    .from(
+        map.values()
+    )
+    .sort(
+        function(a,b){
+
+            return(
+                new Date(
+                    a.Update_at
+                ) -
+
+                new Date(
+                    b.Update_at
+                )
+            );
+
+        }
+    );
+}
+
+
+/* =========================================
    GRAPH
-   IMPORTANT:
-   Uses Record_Hour from Supabase.
-   This must come from PC Python SCADA.
-   ================================================= */
+   ========================================= */
 
 function drawGraph(rows){
 
@@ -693,19 +693,25 @@ function drawGraph(rows){
     new Array(24).fill(0);
 
 
-    rows.forEach(function(row){
+    rows.forEach(
+        function(row){
 
-        const h =
-        Number(row.Record_Hour);
+            const hour =
+            Number(
+                row.Record_Hour
+            );
 
-        if(
-            h >= 0 &&
-            h <= 23
-        ){
-            hourly[h]++;
+            if(
+                hour >= 0 &&
+                hour <= 23
+            ){
+
+                hourly[hour]++;
+
+            }
+
         }
-
-    });
+    );
 
 
     const max =
@@ -756,7 +762,9 @@ function drawGraph(rows){
                 "px'></div>" +
 
                 "<div class='bar-label'>" +
+
                 label +
+
                 "</div>" +
 
             "</div>";
@@ -772,9 +780,9 @@ function drawGraph(rows){
 }
 
 
-/* =================================================
+/* =========================================
    REFRESH
-   ================================================= */
+   ========================================= */
 
 async function refresh(){
 
@@ -854,25 +862,30 @@ async function refresh(){
         }
 
 
-        /* =========================================
+        /* =====================================
            SORT
-           ========================================= */
+           ===================================== */
 
         all.sort(
             function(a,b){
 
                 return(
-                    new Date(a.Update_at) -
-                    new Date(b.Update_at)
+                    new Date(
+                        a.Update_at
+                    ) -
+
+                    new Date(
+                        b.Update_at
+                    )
                 );
 
             }
         );
 
 
-        /* =========================================
-           LATEST PC RECORD
-           ========================================= */
+        /* =====================================
+           LATEST RECORD
+           ===================================== */
 
         const latest =
         all[
@@ -880,17 +893,11 @@ async function refresh(){
         ];
 
 
-        const latestTime =
-        normalizeCloudTime(
-            latest.Update_at
-        );
+        /* =====================================
+           PC CURRENT TOTAL
 
-
-        /* =========================================
-           CURRENT PC TOTAL
-
-           PC latest Mould_count
-           ========================================= */
+           Latest Mould_count
+           ===================================== */
 
         const total =
         Number(
@@ -910,52 +917,46 @@ async function refresh(){
         total;
 
 
-        /* =========================================
-           TODAY DATE
-
-           Uses local PC/mobile date.
-           ========================================= */
+        /* =====================================
+           TODAY
+           ===================================== */
 
         const now =
         new Date();
 
 
         const todayDate =
-        now.getFullYear() +
-        "-" +
-        String(
-            now.getMonth() + 1
-        ).padStart(2,"0") +
-        "-" +
-        String(
-            now.getDate()
-        ).padStart(2,"0");
+        localDateString(now);
 
 
-        /* =========================================
-           TODAY ROWS
-
-           Record_Date comes from Python.
-           ========================================= */
+        /*
+          Only today's records.
+          Then duplicate protection.
+        */
 
         const rows =
-        all.filter(
-            function(row){
+        uniqueProductionRows(
 
-                return(
-                    String(
-                        row.Record_Date || ""
-                    ) ===
-                    todayDate
-                );
+            all.filter(
+                function(row){
 
-            }
+                    return(
+                        String(
+                            row.Record_Date ||
+                            ""
+                        ) ===
+                        todayDate
+                    );
+
+                }
+            )
+
         );
 
 
-        /* =========================================
+        /* =====================================
            MACHINE
-           ========================================= */
+           ===================================== */
 
         document
         .getElementById("machine")
@@ -964,9 +965,9 @@ async function refresh(){
         "--";
 
 
-        /* =========================================
+        /* =====================================
            SHIFT
-           ========================================= */
+           ===================================== */
 
         document
         .getElementById("shift")
@@ -975,9 +976,9 @@ async function refresh(){
         "--";
 
 
-        /* =========================================
+        /* =====================================
            STATUS
-           ========================================= */
+           ===================================== */
 
         const status =
         latest.Status ||
@@ -997,9 +998,9 @@ async function refresh(){
         status;
 
 
-        /* =========================================
+        /* =====================================
            LAST MOULD
-           ========================================= */
+           ===================================== */
 
         document
         .getElementById("lastMould")
@@ -1017,11 +1018,9 @@ async function refresh(){
         );
 
 
-        /* =========================================
-           CURRENT HOUR
-
-           Uses Record_Hour.
-           ========================================= */
+        /* =====================================
+           THIS HOUR
+           ===================================== */
 
         const currentHour =
         now.getHours();
@@ -1054,9 +1053,9 @@ async function refresh(){
         thisHour;
 
 
-        /* =========================================
+        /* =====================================
            PREVIOUS HOUR
-           ========================================= */
+           ===================================== */
 
         const previousHour =
         currentHour - 1;
@@ -1097,15 +1096,11 @@ async function refresh(){
         previous;
 
 
-        /* =========================================
+        /* =====================================
            AVERAGE
 
-           PC:
-           Total / 24
-
-           Example:
-           152 / 24 = 6.33
-           ========================================= */
+           PC = Total / 24
+           ===================================== */
 
         const average =
         total / 24;
@@ -1123,9 +1118,9 @@ async function refresh(){
         average.toFixed(1);
 
 
-        /* =========================================
-           SENSOR
-           ========================================= */
+        /* =====================================
+           SENSOR / CYCLE
+           ===================================== */
 
         document
         .getElementById("sensor")
@@ -1139,21 +1134,15 @@ async function refresh(){
         "-- V";
 
 
-        /* =========================================
-           CYCLE
-           ========================================= */
-
         document
         .getElementById("cycle")
         .textContent =
         "--";
 
 
-        /* =========================================
-           LAST 10 RECORDS
-
-           Use today's records.
-           ========================================= */
+        /* =====================================
+           LAST 10
+           ===================================== */
 
         const last10 =
         rows
@@ -1161,7 +1150,8 @@ async function refresh(){
         .reverse();
 
 
-        let recordsHTML = "";
+        let recordsHTML =
+        "";
 
 
         last10.forEach(
@@ -1171,36 +1161,38 @@ async function refresh(){
 
                 "<tr>" +
 
-                "<td>" +
-                (index + 1) +
-                "</td>" +
+                    "<td>" +
+                    (
+                        index + 1
+                    ) +
+                    "</td>" +
 
-                "<td>" +
-                (
-                    row.Mould_count ??
-                    "--"
-                ) +
-                "</td>" +
+                    "<td>" +
+                    (
+                        row.Mould_count ??
+                        "--"
+                    ) +
+                    "</td>" +
 
-                "<td>" +
-                formatTime(
-                    row.Update_at
-                ) +
-                "</td>" +
+                    "<td>" +
+                    formatTime(
+                        row.Update_at
+                    ) +
+                    "</td>" +
 
-                "<td>" +
-                (
-                    row.Shift ??
-                    "--"
-                ) +
-                "</td>" +
+                    "<td>" +
+                    (
+                        row.Shift ??
+                        "--"
+                    ) +
+                    "</td>" +
 
-                "<td class='valid'>" +
-                (
-                    row.Status ??
-                    "--"
-                ) +
-                "</td>" +
+                    "<td class='valid'>" +
+                    (
+                        row.Status ??
+                        "--"
+                    ) +
+                    "</td>" +
 
                 "</tr>";
 
@@ -1214,13 +1206,13 @@ async function refresh(){
         recordsHTML;
 
 
-        /* =========================================
+        /* =====================================
            GRAPH
+           ===================================== */
 
-           Record_Hour based.
-           ========================================= */
-
-        drawGraph(rows);
+        drawGraph(
+            rows
+        );
 
     }
 
@@ -1239,47 +1231,78 @@ async function refresh(){
         )
         .textContent =
         "SUPABASE : ERROR";
+
     }
 
 }
 
 
-/* =================================================
+/* =========================================
    NO DATA
-   ================================================= */
+   ========================================= */
 
 function showNoData(){
 
-    document.getElementById("total").textContent = "0";
+    document
+    .getElementById("total")
+    .textContent =
+    "0";
 
-    document.getElementById("summaryTotal").textContent = "0";
+    document
+    .getElementById("summaryTotal")
+    .textContent =
+    "0";
 
-    document.getElementById("thisHour").textContent = "0";
+    document
+    .getElementById("thisHour")
+    .textContent =
+    "0";
 
-    document.getElementById("summaryHour").textContent = "0";
+    document
+    .getElementById("summaryHour")
+    .textContent =
+    "0";
 
-    document.getElementById("previous").textContent = "0";
+    document
+    .getElementById("previous")
+    .textContent =
+    "0";
 
-    document.getElementById("summaryPrevious").textContent = "0";
+    document
+    .getElementById("summaryPrevious")
+    .textContent =
+    "0";
 
-    document.getElementById("average").textContent = "0.0";
+    document
+    .getElementById("average")
+    .textContent =
+    "0.0";
 
-    document.getElementById("summaryAverage").textContent = "0.0";
+    document
+    .getElementById("summaryAverage")
+    .textContent =
+    "0.0";
 
-    document.getElementById("scadaStatus").textContent =
+    document
+    .getElementById("scadaStatus")
+    .textContent =
     "SCADA : WAITING";
 
-    document.getElementById("records").innerHTML =
-    "<tr>" +
-    "<td colspan='5'>No production data</td>" +
-    "</tr>";
+    document
+    .getElementById("records")
+    .innerHTML =
 
+    "<tr>" +
+    "<td colspan='5'>" +
+    "No production data" +
+    "</td>" +
+    "</tr>";
 }
 
 
-/* =================================================
+/* =========================================
    START
-   ================================================= */
+   ========================================= */
 
 updateClock();
 
