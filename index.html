@@ -7,9 +7,7 @@
 <title>MOULD COUNTER SCADA</title>
 
 <style>
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
     margin:0;
@@ -19,9 +17,7 @@ html,body{
     font-family:Arial,sans-serif;
 }
 
-body{
-    overflow-x:hidden;
-}
+body{overflow-x:hidden}
 
 .page{
     width:100%;
@@ -31,7 +27,6 @@ body{
 }
 
 /* HEADER */
-
 .header{
     text-align:center;
     padding:12px 5px;
@@ -51,7 +46,6 @@ body{
 }
 
 /* STATUS */
-
 .status-row{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -69,16 +63,10 @@ body{
     font-weight:bold;
 }
 
-.connected{
-    color:#00ff42;
-}
-
-.running{
-    color:#ffe500;
-}
+.connected{color:#00ff42}
+.running{color:#ffe500}
 
 /* CLOCK */
-
 .clock{
     background:#050d11;
     border:1px solid #2b3b43;
@@ -92,7 +80,6 @@ body{
 }
 
 /* CARDS */
-
 .cards{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -122,13 +109,7 @@ body{
     margin-top:15px;
 }
 
-.green{
-    color:#00ff42;
-}
-
-.yellow{
-    color:#ffe500;
-}
+.green{color:#00ff42}
 
 .small{
     color:#8d9aa0;
@@ -137,7 +118,6 @@ body{
 }
 
 /* GRAPH */
-
 .graph-panel{
     background:#050d11;
     border:1px solid #263942;
@@ -197,7 +177,6 @@ body{
 }
 
 /* RECORDS */
-
 .records-panel{
     background:#050d11;
     border:1px solid #263942;
@@ -239,7 +218,6 @@ td{
 }
 
 /* SUMMARY */
-
 .summary{
     background:#050d11;
     border:1px solid #263942;
@@ -273,44 +251,29 @@ td{
 }
 
 /* MOBILE */
-
 @media(max-width:600px){
 
-    .page{
-        padding:7px;
-    }
+    .page{padding:7px}
 
-    .title{
-        font-size:23px;
-    }
+    .title{font-size:23px}
 
-    .subtitle{
-        font-size:11px;
-    }
+    .subtitle{font-size:11px}
 
     .status-box{
         font-size:14px;
         padding:13px 4px;
     }
 
-    .clock{
-        font-size:20px;
-    }
+    .clock{font-size:20px}
 
     .card{
         min-height:115px;
         padding:14px 5px;
     }
 
-    .card-title{
-        font-size:13px;
-    }
+    .card-title{font-size:13px}
 
-    .big{
-        font-size:34px;
-    }
-
-    /* LAST 10 RECORDS AS MOBILE CARDS */
+    .big{font-size:34px}
 
     .table-container{
         overflow:visible;
@@ -322,13 +285,9 @@ td{
         table-layout:auto;
     }
 
-    table thead{
-        display:none;
-    }
+    table thead{display:none}
 
-    table tbody{
-        display:block;
-    }
+    table tbody{display:block}
 
     table tbody tr{
         display:grid;
@@ -343,11 +302,8 @@ td{
         margin-bottom:8px;
 
         border:1px solid #34444c;
-
         border-radius:8px;
-
         overflow:hidden;
-
         background:#071116;
     }
 
@@ -361,21 +317,13 @@ td{
 
     table tbody td:nth-child(1){
         grid-area:no;
-
         grid-row:1 / span 2;
-
         display:flex;
-
         align-items:center;
-
         justify-content:center;
-
         border-right:1px solid #34444c;
-
         border-bottom:0;
-
         color:#18dfff;
-
         font-weight:bold;
     }
 
@@ -425,28 +373,17 @@ td{
         font-size:10px;
     }
 
-    .graph{
-        height:300px;
-    }
+    .graph{height:300px}
 }
-
-/* SMALL MOBILE */
 
 @media(max-width:380px){
 
-    .title{
-        font-size:20px;
-    }
+    .title{font-size:20px}
 
-    .card-title{
-        font-size:12px;
-    }
+    .card-title{font-size:12px}
 
-    .big{
-        font-size:31px;
-    }
+    .big{font-size:31px}
 }
-
 </style>
 </head>
 
@@ -455,9 +392,7 @@ td{
 <div class="page">
 
 <!-- HEADER -->
-
 <div class="header">
-
     <div class="title">
         MOULD COUNTER SCADA
     </div>
@@ -465,12 +400,10 @@ td{
     <div class="subtitle">
         MAXWELL AUTO COMPONENTS • CLOUD MOBILE SCADA
     </div>
-
 </div>
 
 
 <!-- STATUS -->
-
 <div class="status-row">
 
     <div
@@ -489,7 +422,6 @@ td{
 
 
 <!-- CLOCK -->
-
 <div
 class="clock"
 id="clock">
@@ -498,168 +430,149 @@ id="clock">
 
 
 <!-- CARDS -->
-
 <div class="cards">
 
+    <div class="card">
+        <div class="card-title">
+            TOTAL MOULD COUNT
+        </div>
 
-<div class="card">
+        <div
+        class="big green"
+        id="total">
+            0
+        </div>
 
-    <div class="card-title">
-        TOTAL MOULD COUNT
+        <div class="small">
+            CURRENT PC COUNT
+        </div>
     </div>
 
-    <div
-    class="big green"
-    id="total">
-        0
+
+    <div class="card">
+        <div class="card-title">
+            THIS HOUR
+        </div>
+
+        <div
+        class="big"
+        id="thisHour">
+            0
+        </div>
+
+        <div class="small">
+            MOULDS / HOUR
+        </div>
     </div>
 
-    <div class="small">
-        CURRENT PC COUNT
+
+    <div class="card">
+        <div class="card-title">
+            AVERAGE / HOUR
+        </div>
+
+        <div
+        class="big"
+        id="average">
+            0.0
+        </div>
+
+        <div class="small">
+            PRODUCTION RATE
+        </div>
     </div>
 
-</div>
 
+    <div class="card">
+        <div class="card-title">
+            PREVIOUS HOUR
+        </div>
 
-<div class="card">
+        <div
+        class="big"
+        id="previous">
+            0
+        </div>
 
-    <div class="card-title">
-        THIS HOUR
+        <div class="small">
+            LAST HOUR
+        </div>
     </div>
 
-    <div
-    class="big"
-    id="thisHour">
-        0
+
+    <div class="card">
+        <div class="card-title">
+            SENSOR AI1
+        </div>
+
+        <div
+        class="big"
+        id="sensor">
+            --
+        </div>
+
+        <div
+        class="small"
+        id="voltage">
+            -- V
+        </div>
     </div>
 
-    <div class="small">
-        MOULDS / HOUR
+
+    <div class="card">
+        <div class="card-title">
+            CYCLE TIME
+        </div>
+
+        <div
+        class="big"
+        id="cycle">
+            --
+        </div>
+
+        <div class="small">
+            SECONDS
+        </div>
     </div>
 
-</div>
 
+    <div class="card">
+        <div class="card-title">
+            SHIFT
+        </div>
 
-<div class="card">
+        <div
+        class="big"
+        id="shift">
+            --
+        </div>
 
-    <div class="card-title">
-        AVERAGE / HOUR
+        <div class="small">
+            CURRENT SHIFT
+        </div>
     </div>
 
-    <div
-    class="big"
-    id="average">
-        0.0
+
+    <div class="card">
+        <div class="card-title">
+            LAST MOULD
+        </div>
+
+        <div
+        class="big"
+        id="lastMould">
+            --
+        </div>
+
+        <div class="small">
+            LAST PRODUCTION TIME
+        </div>
     </div>
-
-    <div class="small">
-        PRODUCTION RATE
-    </div>
-
-</div>
-
-
-<div class="card">
-
-    <div class="card-title">
-        PREVIOUS HOUR
-    </div>
-
-    <div
-    class="big"
-    id="previous">
-        0
-    </div>
-
-    <div class="small">
-        LAST HOUR
-    </div>
-
-</div>
-
-
-<div class="card">
-
-    <div class="card-title">
-        SENSOR AI1
-    </div>
-
-    <div
-    class="big"
-    id="sensor">
-        --
-    </div>
-
-    <div
-    class="small"
-    id="voltage">
-        -- V
-    </div>
-
-</div>
-
-
-<div class="card">
-
-    <div class="card-title">
-        CYCLE TIME
-    </div>
-
-    <div
-    class="big"
-    id="cycle">
-        --
-    </div>
-
-    <div class="small">
-        SECONDS
-    </div>
-
-</div>
-
-
-<div class="card">
-
-    <div class="card-title">
-        SHIFT
-    </div>
-
-    <div
-    class="big"
-    id="shift">
-        --
-    </div>
-
-    <div class="small">
-        CURRENT SHIFT
-    </div>
-
-</div>
-
-
-<div class="card">
-
-    <div class="card-title">
-        LAST MOULD
-    </div>
-
-    <div
-    class="big"
-    id="lastMould">
-        --
-    </div>
-
-    <div class="small">
-        LAST PRODUCTION TIME
-    </div>
-
-</div>
 
 </div>
 
 
 <!-- GRAPH -->
-
 <div class="graph-panel">
 
     <div class="section-title">
@@ -675,7 +588,6 @@ id="clock">
 
 
 <!-- RECORDS -->
-
 <div class="records-panel">
 
     <div class="section-title">
@@ -687,7 +599,6 @@ id="clock">
         <table>
 
             <thead>
-
                 <tr>
                     <th>No.</th>
                     <th>MOULD COUNT</th>
@@ -695,7 +606,6 @@ id="clock">
                     <th>SHIFT</th>
                     <th>STATUS</th>
                 </tr>
-
             </thead>
 
             <tbody id="records">
@@ -716,7 +626,6 @@ id="clock">
 
 
 <!-- SUMMARY -->
-
 <div class="summary">
 
     <div class="section-title">
@@ -797,9 +706,7 @@ id="clock">
 
 
 <div class="footer">
-
     AUTO REFRESH : 2 SEC • SUPABASE CLOUD
-
 </div>
 
 </div>
@@ -816,8 +723,7 @@ const SUPABASE_URL =
 
 /*
    IMPORTANT:
-   Paste your CURRENT Supabase PUBLISHABLE KEY here.
-
+   Use ONLY your Supabase PUBLISHABLE key.
    Do NOT use secret/service_role key.
 */
 
@@ -837,9 +743,7 @@ function normalizeCloudTime(value){
     const d =
     new Date(value);
 
-    if(
-        isNaN(d.getTime())
-    ){
+    if(isNaN(d.getTime())){
         return d;
     }
 
@@ -852,9 +756,7 @@ function formatTime(value){
     const d =
     normalizeCloudTime(value);
 
-    if(
-        isNaN(d.getTime())
-    ){
+    if(isNaN(d.getTime())){
         return "--";
     }
 
@@ -875,9 +777,7 @@ function formatDateTime(value){
     const d =
     normalizeCloudTime(value);
 
-    if(
-        isNaN(d.getTime())
-    ){
+    if(isNaN(d.getTime())){
         return "--";
     }
 
@@ -887,11 +787,9 @@ function formatDateTime(value){
             day:"2-digit",
             month:"2-digit",
             year:"numeric",
-
             hour:"2-digit",
             minute:"2-digit",
             second:"2-digit",
-
             hour12:false
         }
     );
@@ -942,11 +840,9 @@ function updateClock(){
             day:"2-digit",
             month:"2-digit",
             year:"numeric",
-
             hour:"2-digit",
             minute:"2-digit",
             second:"2-digit",
-
             hour12:false
         }
     );
@@ -954,122 +850,146 @@ function updateClock(){
 
 
 /* =================================================
-   TODAY FILTER
-   IMPORTANT
-
-   PC uses today's Date.
-
-   Mobile will also use today's
-   calendar date.
-
-   Old days are NOT included.
+   SAME DAY
    ================================================= */
 
-function isToday(date){
-
-    const now =
-    new Date();
+function isSameDay(a,b){
 
     return(
-        date.getFullYear() ===
-        now.getFullYear()
-
-        &&
-
-        date.getMonth() ===
-        now.getMonth()
-
-        &&
-
-        date.getDate() ===
-        now.getDate()
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
     );
 }
 
 
 /* =================================================
-   REMOVE EXACT DUPLICATE CLOUD RECORDS
+   REMOVE DUPLICATE CLOUD RECORDS
 
-   Same machine + same mould count +
-   same timestamp = same event.
+   IMPORTANT:
+   Old Supabase duplicates are ignored for display.
+   Supabase data itself is NOT deleted.
    ================================================= */
 
-function removeDuplicateRows(rows){
+function uniqueRows(rows){
 
     const map =
     new Map();
 
     rows.forEach(function(row){
 
-        const key =
-            String(row.Machine_name ?? "") +
-            "|" +
-            String(row.Mould_count ?? "") +
-            "|" +
-            String(row.Update_at ?? "");
+        const machine =
+        String(
+            row.Machine_name ?? ""
+        ).trim();
 
-        if(!map.has(key)){
-            map.set(key,row);
+        const count =
+        String(
+            row.Mould_count ?? ""
+        ).trim();
+
+        let key;
+
+        if(count !== ""){
+
+            key =
+            machine +
+            "|COUNT|" +
+            count;
+
+        }
+        else{
+
+            key =
+            machine +
+            "|TIME|" +
+            String(
+                row.Update_at ?? ""
+            );
+
+        }
+
+        const old =
+        map.get(key);
+
+        if(!old){
+
+            map.set(
+                key,
+                row
+            );
+
+        }
+        else{
+
+            const oldTime =
+            new Date(
+                old.Update_at
+            ).getTime();
+
+            const newTime =
+            new Date(
+                row.Update_at
+            ).getTime();
+
+            if(
+                newTime >= oldTime
+            ){
+
+                map.set(
+                    key,
+                    row
+                );
+
+            }
         }
 
     });
 
-    return Array.from(map.values());
+
+    const result =
+    Array.from(
+        map.values()
+    );
+
+
+    result.sort(
+        function(a,b){
+
+            return(
+                new Date(
+                    a.Update_at
+                ) -
+
+                new Date(
+                    b.Update_at
+                )
+            );
+
+        }
+    );
+
+
+    return result;
 }
 
 
 /* =================================================
    GRAPH
-
-   Uses TODAY rows only.
-
-   00 to 23 calendar hours.
-
-   Therefore old-day data is not included.
    ================================================= */
 
-function drawGraph(rows){
-
-    const values =
-    new Array(24).fill(0);
-
-    rows.forEach(function(row){
-
-        const t =
-        normalizeCloudTime(
-            row.Update_at
-        );
-
-        if(
-            isNaN(t.getTime())
-        ){
-            return;
-        }
-
-        const index =
-        t.getHours();
-
-        if(
-            index >= 0 &&
-            index < 24
-        ){
-            values[index]++;
-        }
-
-    });
-
+function drawGraph(hourly){
 
     const max =
     Math.max(
         1,
-        ...values
+        ...hourly
     );
 
+    let html =
+    "";
 
-    let html = "";
-
-
-    values.forEach(
+    hourly.forEach(
         function(value,index){
 
             const height =
@@ -1096,7 +1016,9 @@ function drawGraph(rows){
                 "style='bottom:" +
                 (height + 5) +
                 "px'>" +
+
                 value +
+
                 "</div>" +
 
                 "<div class='bar' " +
@@ -1105,7 +1027,9 @@ function drawGraph(rows){
                 "px'></div>" +
 
                 "<div class='bar-label'>" +
+
                 label +
+
                 "</div>" +
 
             "</div>";
@@ -1167,9 +1091,7 @@ async function refresh(){
         );
 
 
-        if(
-            !response.ok
-        ){
+        if(!response.ok){
 
             throw new Error(
                 "HTTP " +
@@ -1202,29 +1124,59 @@ async function refresh(){
         }
 
 
-        /* =================================================
-           SORT
-           ================================================= */
+        const now =
+        new Date();
 
-        all.sort(
-            function(a,b){
 
-                return(
-                    new Date(a.Update_at) -
-                    new Date(b.Update_at)
-                );
+        /* ==========================================
+           TODAY ONLY
+           ========================================== */
 
-            }
+        const todayRows =
+        uniqueRows(
+
+            all.filter(
+                function(row){
+
+                    const t =
+                    normalizeCloudTime(
+                        row.Update_at
+                    );
+
+                    return(
+                        !isNaN(
+                            t.getTime()
+                        ) &&
+
+                        isSameDay(
+                            t,
+                            now
+                        )
+                    );
+
+                }
+            )
+
         );
 
 
-        /* =================================================
-           LATEST RECORD
-           ================================================= */
+        if(
+            todayRows.length === 0
+        ){
+
+            showNoData();
+
+            return;
+        }
+
+
+        /* ==========================================
+           LATEST TODAY RECORD
+           ========================================== */
 
         const latest =
-        all[
-            all.length - 1
+        todayRows[
+            todayRows.length - 1
         ];
 
 
@@ -1234,76 +1186,48 @@ async function refresh(){
         );
 
 
-        /* =================================================
-           TODAY DATA ONLY
-
-           This is the main PC/mobile sync fix.
-           ================================================= */
-
-        const todayRows =
-        all.filter(
-            function(row){
-
-                const t =
-                normalizeCloudTime(
-                    row.Update_at
-                );
-
-                return(
-                    !isNaN(t.getTime()) &&
-                    isToday(t)
-                );
-
-            }
-        );
-
-
-        /* =================================================
-           REMOVE EXACT DUPLICATES
-           ================================================= */
-
-        const rows =
-        removeDuplicateRows(
-            todayRows
-        );
-
-
-        /* =================================================
+        /* ==========================================
            TOTAL
 
-           PC Today record count.
-           ================================================= */
+           PC TODAY TOTAL
+           ========================================== */
 
         const total =
-        rows.length;
+        todayRows.length;
 
 
         document
-        .getElementById("total")
+        .getElementById(
+            "total"
+        )
         .textContent =
         total;
 
 
         document
-        .getElementById("summaryTotal")
+        .getElementById(
+            "summaryTotal"
+        )
         .textContent =
         total;
 
 
-        /* =================================================
+        /* ==========================================
            MACHINE
-           ================================================= */
+           ========================================== */
 
         document
-        .getElementById("machine")
+        .getElementById(
+            "machine"
+        )
         .textContent =
         latest.Machine_name ||
         "--";
 
 
-        /* =================================================
+        /* ==========================================
            SHIFT
-           ================================================= */
+           ========================================== */
 
         const currentShift =
         latest.Shift ||
@@ -1313,14 +1237,16 @@ async function refresh(){
 
 
         document
-        .getElementById("shift")
+        .getElementById(
+            "shift"
+        )
         .textContent =
         currentShift;
 
 
-        /* =================================================
+        /* ==========================================
            STATUS
-           ================================================= */
+           ========================================== */
 
         const status =
         latest.Status ||
@@ -1328,24 +1254,30 @@ async function refresh(){
 
 
         document
-        .getElementById("scadaStatus")
+        .getElementById(
+            "scadaStatus"
+        )
         .textContent =
         "SCADA : " +
         status;
 
 
         document
-        .getElementById("summaryStatus")
+        .getElementById(
+            "summaryStatus"
+        )
         .textContent =
         status;
 
 
-        /* =================================================
+        /* ==========================================
            LAST MOULD
-           ================================================= */
+           ========================================== */
 
         document
-        .getElementById("lastMould")
+        .getElementById(
+            "lastMould"
+        )
         .textContent =
         formatTime(
             latest.Update_at
@@ -1353,27 +1285,24 @@ async function refresh(){
 
 
         document
-        .getElementById("cloudUpdate")
+        .getElementById(
+            "cloudUpdate"
+        )
         .textContent =
         formatDateTime(
             latest.Update_at
         );
 
 
-        /* =================================================
-           CURRENT HOUR
-           ================================================= */
+        /* ==========================================
+           HOURLY COUNTS
+           ========================================== */
 
-        const now =
-        new Date();
-
-
-        const currentHour =
-        now.getHours();
+        const hourly =
+        new Array(24).fill(0);
 
 
-        const thisHour =
-        rows.filter(
+        todayRows.forEach(
             function(row){
 
                 const t =
@@ -1381,171 +1310,173 @@ async function refresh(){
                     row.Update_at
                 );
 
-                return(
-                    t.getHours() ===
-                    currentHour
-                );
 
-            }
-        ).length;
+                const h =
+                t.getHours();
 
 
-        document
-        .getElementById("thisHour")
-        .textContent =
-        thisHour;
+                if(
+                    h >= 0 &&
+                    h < 24
+                ){
 
-
-        document
-        .getElementById("summaryHour")
-        .textContent =
-        thisHour;
-
-
-        /* =================================================
-           PREVIOUS HOUR
-           ================================================= */
-
-        const previousHour =
-        currentHour - 1;
-
-
-        let previous = 0;
-
-
-        if(previousHour >= 0){
-
-            previous =
-            rows.filter(
-                function(row){
-
-                    const t =
-                    normalizeCloudTime(
-                        row.Update_at
-                    );
-
-                    return(
-                        t.getHours() ===
-                        previousHour
-                    );
+                    hourly[h]++;
 
                 }
-            ).length;
 
-        }
-
-
-        document
-        .getElementById("previous")
-        .textContent =
-        previous;
-
-
-        document
-        .getElementById("summaryPrevious")
-        .textContent =
-        previous;
-
-
-        /* =================================================
-           AVERAGE / HOUR
-
-           Production start = 08:30.
-
-           Same style as PC calculation.
-           ================================================= */
-
-        const start =
-        new Date(now);
-
-        start.setHours(
-            8,
-            30,
-            0,
-            0
+            }
         );
 
 
-        let averageHours =
-        (
-            now.getTime() -
-            start.getTime()
-        ) /
-        3600000;
+        /* ==========================================
+           THIS HOUR
+           ========================================== */
+
+        const thisHour =
+        hourly[
+            now.getHours()
+        ];
 
 
-        if(
-            averageHours < 1
-        ){
-            averageHours = 1;
-        }
+        document
+        .getElementById(
+            "thisHour"
+        )
+        .textContent =
+        thisHour;
 
+
+        document
+        .getElementById(
+            "summaryHour"
+        )
+        .textContent =
+        thisHour;
+
+
+        /* ==========================================
+           PREVIOUS HOUR
+           ========================================== */
+
+        const previousIndex =
+        now.getHours() - 1;
+
+
+        const previous =
+        previousIndex >= 0
+        ?
+        hourly[
+            previousIndex
+        ]
+        :
+        0;
+
+
+        document
+        .getElementById(
+            "previous"
+        )
+        .textContent =
+        previous;
+
+
+        document
+        .getElementById(
+            "summaryPrevious"
+        )
+        .textContent =
+        previous;
+
+
+        /* ==========================================
+           AVERAGE
+
+           PC calculation:
+
+           TODAY TOTAL / 24
+
+           Example:
+           143 / 24 = 5.96
+           display = 6.0
+           ========================================== */
 
         const average =
-        total /
-        averageHours;
+        total / 24;
 
 
         document
-        .getElementById("average")
+        .getElementById(
+            "average"
+        )
         .textContent =
         average.toFixed(1);
 
 
         document
-        .getElementById("summaryAverage")
+        .getElementById(
+            "summaryAverage"
+        )
         .textContent =
         average.toFixed(1);
 
 
-        /* =================================================
+        /* ==========================================
            SENSOR
-           ================================================= */
+           ========================================== */
 
         document
-        .getElementById("sensor")
+        .getElementById(
+            "sensor"
+        )
         .textContent =
         "--";
 
 
         document
-        .getElementById("voltage")
+        .getElementById(
+            "voltage"
+        )
         .textContent =
         "-- V";
 
 
-        /* =================================================
+        /* ==========================================
            CYCLE
-           ================================================= */
+           ========================================== */
 
         document
-        .getElementById("cycle")
+        .getElementById(
+            "cycle"
+        )
         .textContent =
         "--";
 
 
-        /* =================================================
-           LAST 10 RECORDS
-           ================================================= */
+        /* ==========================================
+           LAST 10
+           ========================================== */
 
         const last10 =
-        all
+        todayRows
         .slice(-10)
         .reverse();
 
 
-        let recordsHTML = "";
+        let html =
+        "";
 
 
         last10.forEach(
             function(row,index){
 
-                recordsHTML +=
+                html +=
 
                 "<tr>" +
 
                 "<td>" +
-                (index + 1) +
+                (
+                    index + 1
+                ) +
                 "</td>" +
 
                 "<td>" +
@@ -1582,20 +1513,19 @@ async function refresh(){
 
 
         document
-        .getElementById("records")
+        .getElementById(
+            "records"
+        )
         .innerHTML =
-        recordsHTML;
+        html;
 
 
-        /* =================================================
+        /* ==========================================
            GRAPH
-
-           IMPORTANT:
-           Use SAME todayRows used for PC calculation.
-           ================================================= */
+           ========================================== */
 
         drawGraph(
-            rows
+            hourly
         );
 
     }
