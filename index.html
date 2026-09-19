@@ -1,25 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,
-initial-scale=1.0,
-maximum-scale=1.0,
-user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 
 <title>MOULD COUNTER SCADA</title>
 
 <style>
-
-/* ================= BASIC ================= */
-
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
     margin:0;
@@ -33,9 +21,6 @@ body{
     overflow-x:hidden;
 }
 
-
-/* ================= PAGE ================= */
-
 .page{
     width:100%;
     max-width:900px;
@@ -43,540 +28,417 @@ body{
     padding:10px;
 }
 
-
-/* ================= HEADER ================= */
-
+/* HEADER */
 .header{
     text-align:center;
-
     padding:12px 5px;
-
-    border-bottom:
-    2px solid #18dfff;
+    border-bottom:2px solid #18dfff;
 }
 
 .title{
     color:#18dfff;
-
     font-size:28px;
-
     font-weight:bold;
 }
 
 .subtitle{
     color:#8d9aa0;
-
     font-size:14px;
-
     margin-top:5px;
 }
 
-
-/* ================= STATUS ================= */
-
+/* STATUS */
 .status-row{
-
     display:grid;
-
-    grid-template-columns:
-    1fr 1fr;
-
+    grid-template-columns:1fr 1fr;
     gap:10px;
-
     margin-top:12px;
 }
 
 .status-box{
-
     background:#050d11;
-
-    border:
-    1px solid #2b3b43;
-
+    border:1px solid #2b3b43;
     border-radius:12px;
-
-    padding:15px;
-
+    padding:15px 5px;
     text-align:center;
-
-    font-size:18px;
-
+    font-size:17px;
     font-weight:bold;
 }
 
-.connected{
-    color:#00ff42;
-}
+.connected{color:#00ff42}
+.running{color:#ffe500}
 
-.running{
-    color:#ffe500;
-}
-
-
-/* ================= CLOCK ================= */
-
+/* CLOCK */
 .clock{
-
     background:#050d11;
-
-    border:
-    1px solid #2b3b43;
-
+    border:1px solid #2b3b43;
     border-radius:12px;
-
     text-align:center;
-
     color:#ffe500;
-
-    font-size:25px;
-
+    font-size:23px;
     font-weight:bold;
-
     padding:13px;
-
     margin-top:10px;
 }
 
-
-/* ================= CARDS ================= */
-
+/* CARDS */
 .cards{
-
     display:grid;
-
-    grid-template-columns:
-    1fr 1fr;
-
+    grid-template-columns:1fr 1fr;
     gap:10px;
-
     margin-top:10px;
 }
 
 .card{
-
     background:#050d11;
-
-    border:
-    1px solid #263942;
-
+    border:1px solid #263942;
     border-radius:12px;
-
-    padding:17px 12px;
-
+    padding:17px 10px;
     text-align:center;
-
     min-height:125px;
 }
 
 .card-title{
-
     color:#18dfff;
-
-    font-size:16px;
-
+    font-size:15px;
     font-weight:bold;
-
 }
 
 .big{
-
     color:#18dfff;
-
-    font-size:42px;
-
+    font-size:40px;
     font-weight:bold;
-
     margin-top:15px;
 }
 
-.green{
-
-    color:#00ff42;
-}
-
-.yellow{
-
-    color:#ffe500;
-}
+.green{color:#00ff42}
+.yellow{color:#ffe500}
 
 .small{
-
     color:#8d9aa0;
-
-    font-size:13px;
-
+    font-size:12px;
     margin-top:8px;
 }
 
-
-/* ================= SENSOR ================= */
-
-.sensor-bar{
-
-    width:90%;
-
-    height:13px;
-
-    background:#26343a;
-
-    border-radius:10px;
-
-    margin:
-    15px auto 5px;
-
-    overflow:hidden;
-}
-
-.sensor-fill{
-
-    height:100%;
-
-    width:0%;
-
-    background:#16d83b;
-
-    border-radius:10px;
-
-}
-
-
-/* ================= GRAPH ================= */
-
+/* GRAPH */
 .graph-panel{
-
     background:#050d11;
-
-    border:
-    1px solid #263942;
-
+    border:1px solid #263942;
     border-radius:12px;
-
     margin-top:10px;
-
     padding:12px;
-
 }
 
 .section-title{
-
     color:#18dfff;
-
     text-align:center;
-
     font-size:17px;
-
     font-weight:bold;
-
     margin-bottom:8px;
 }
 
 .graph{
-
     height:300px;
-
     display:flex;
-
     align-items:flex-end;
-
-    gap:3px;
-
-    padding:
-    15px 5px 35px;
-
-    border-bottom:
-    1px solid #34444c;
-
+    gap:2px;
+    padding:15px 2px 35px;
+    border-bottom:1px solid #34444c;
 }
 
 .bar-wrap{
-
     flex:1;
-
     height:100%;
-
     position:relative;
-
     display:flex;
-
     justify-content:flex-end;
-
     align-items:center;
-
     flex-direction:column;
 }
 
 .bar{
-
-    width:75%;
-
+    width:85%;
     min-height:2px;
-
     background:#16d83b;
-
-    border-radius:
-    3px 3px 0 0;
+    border-radius:3px 3px 0 0;
 }
 
 .bar-value{
-
     position:absolute;
-
-    color:#ddd;
-
-    font-size:10px;
-
-    bottom:0;
+    color:#fff;
+    font-size:9px;
+    font-weight:bold;
 }
 
 .bar-label{
-
     position:absolute;
-
     bottom:-30px;
-
     color:#9aa5aa;
-
-    font-size:8px;
-
-    transform:
-    rotate(-45deg);
-
+    font-size:7px;
+    transform:rotate(-45deg);
     white-space:nowrap;
 }
 
-.graph-note{
-
-    text-align:center;
-
-    color:#89979e;
-
-    font-size:13px;
-
-    margin-top:25px;
-}
-
-
-/* ================= RECORD TABLE ================= */
-
+/* RECORDS */
 .records-panel{
-
     background:#050d11;
-
-    border:
-    1px solid #263942;
-
+    border:1px solid #263942;
     border-radius:12px;
-
     margin-top:10px;
-
     padding:10px;
-
 }
 
 .table-container{
-
     width:100%;
-
     overflow-x:auto;
 }
 
 table{
-
     width:100%;
-
     border-collapse:collapse;
-
     table-layout:fixed;
-
     min-width:560px;
-
     font-size:13px;
 }
 
 th{
-
     background:#0b171d;
-
     color:#18dfff;
-
-    border:
-    1px solid #34444c;
-
+    border:1px solid #34444c;
     padding:9px 5px;
-
-    white-space:nowrap;
 }
 
 td{
-
-    border:
-    1px solid #34444c;
-
+    border:1px solid #34444c;
     padding:8px 5px;
-
     text-align:center;
-
     white-space:nowrap;
 }
 
 .valid{
-
     color:#00ff42;
-
     font-weight:bold;
 }
 
-
-/* ================= SUMMARY ================= */
-
+/* SUMMARY */
 .summary{
-
     background:#050d11;
-
-    border:
-    1px solid #263942;
-
+    border:1px solid #263942;
     border-radius:12px;
-
     margin-top:10px;
-
     padding:12px;
 }
 
 .summary-row{
-
     display:flex;
-
     justify-content:space-between;
-
     padding:11px 3px;
-
-    border-bottom:
-    1px solid #26343a;
-
-    font-size:16px;
+    border-bottom:1px solid #26343a;
+    font-size:15px;
 }
 
 .summary-row:last-child{
-
     border-bottom:0;
 }
 
 .summary-value{
-
     font-weight:bold;
-
     color:#eee;
 }
 
-
-/* ================= FOOTER ================= */
-
 .footer{
-
     text-align:center;
-
     color:#707d82;
-
     font-size:12px;
-
     padding:18px 5px;
 }
 
 
-/* ================= MOBILE ================= */
-
+/* MOBILE */
 @media(max-width:600px){
 
     .page{
-
         padding:7px;
     }
 
     .title{
-
-        font-size:24px;
+        font-size:23px;
     }
 
     .subtitle{
-
-        font-size:12px;
+        font-size:11px;
     }
 
     .status-box{
-
-        font-size:15px;
-
-        padding:13px 5px;
+        font-size:14px;
+        padding:13px 4px;
     }
 
     .clock{
-
-        font-size:21px;
+        font-size:20px;
     }
 
     .card{
-
-        min-height:120px;
-
+        min-height:115px;
         padding:14px 5px;
     }
 
     .card-title{
-
-        font-size:14px;
+        font-size:13px;
     }
 
     .big{
+        font-size:34px;
+    }
 
-        font-size:36px;
+    /* LAST 10 RECORDS AS MOBILE CARDS */
+
+    .table-container{
+        overflow:visible;
+    }
+
+    table{
+        min-width:0;
+        width:100%;
+        table-layout:auto;
+    }
+
+    table thead{
+        display:none;
+    }
+
+    table tbody{
+        display:block;
+    }
+
+    table tbody tr{
+        display:grid;
+
+        grid-template-columns:
+        42px 1fr 1fr;
+
+        grid-template-areas:
+        "no count time"
+        "no shift status";
+
+        margin-bottom:8px;
+
+        border:1px solid #34444c;
+
+        border-radius:8px;
+
+        overflow:hidden;
+
+        background:#071116;
+    }
+
+    table tbody td{
+        border:0;
+        border-bottom:1px solid #24343b;
+        padding:8px 5px;
+        font-size:12px;
+        white-space:normal;
+    }
+
+    table tbody td:nth-child(1){
+        grid-area:no;
+
+        grid-row:1 / span 2;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        border-right:1px solid #34444c;
+
+        border-bottom:0;
+
+        color:#18dfff;
+
+        font-weight:bold;
+    }
+
+    table tbody td:nth-child(2){
+        grid-area:count;
+        text-align:left;
+    }
+
+    table tbody td:nth-child(2)::before{
+        content:"MOULD COUNT: ";
+        color:#7f9097;
+        font-size:10px;
+    }
+
+    table tbody td:nth-child(3){
+        grid-area:time;
+        text-align:right;
+    }
+
+    table tbody td:nth-child(3)::before{
+        content:"TIME: ";
+        color:#7f9097;
+        font-size:10px;
+    }
+
+    table tbody td:nth-child(4){
+        grid-area:shift;
+        text-align:left;
+        border-bottom:0;
+    }
+
+    table tbody td:nth-child(4)::before{
+        content:"SHIFT: ";
+        color:#7f9097;
+        font-size:10px;
+    }
+
+    table tbody td:nth-child(5){
+        grid-area:status;
+        text-align:right;
+        border-bottom:0;
+    }
+
+    table tbody td:nth-child(5)::before{
+        content:"STATUS: ";
+        color:#7f9097;
+        font-size:10px;
     }
 
     .graph{
-
-        height:280px;
+        height:300px;
     }
 
 }
 
 
-/* ================= VERY SMALL MOBILE ================= */
+/* SMALL MOBILE */
 
 @media(max-width:380px){
 
     .title{
-
         font-size:20px;
     }
 
     .card-title{
-
         font-size:12px;
     }
 
     .big{
-
-        font-size:32px;
-    }
-
-    .small{
-
-        font-size:11px;
+        font-size:31px;
     }
 
 }
 
 </style>
-
 </head>
-
 
 <body>
 
 <div class="page">
 
-
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 
 <div class="header">
 
@@ -591,248 +453,195 @@ td{
 </div>
 
 
-<!-- ================= STATUS ================= -->
+<!-- STATUS -->
 
 <div class="status-row">
 
     <div
     class="status-box connected"
     id="supabaseStatus">
-
-        SUPABASE :
-        CONNECTING
-
+        SUPABASE : CONNECTING
     </div>
-
 
     <div
     class="status-box running"
     id="scadaStatus">
-
-        SCADA :
-        WAITING
-
+        SCADA : WAITING
     </div>
 
 </div>
 
 
-<!-- ================= CLOCK ================= -->
+<!-- CLOCK -->
 
 <div
 class="clock"
 id="clock">
-
     --
-
 </div>
 
 
-<!-- ================= MAIN CARDS ================= -->
+<!-- CARDS -->
 
 <div class="cards">
 
 
-    <!-- TOTAL -->
+<div class="card">
 
-    <div class="card">
-
-        <div class="card-title">
-            TOTAL MOULD COUNT
-        </div>
-
-        <div
-        class="big green"
-        id="total">
-
-            0
-
-        </div>
-
-        <div class="small">
-            TODAY PRODUCTION
-        </div>
-
+    <div class="card-title">
+        TOTAL MOULD COUNT
     </div>
 
-
-    <!-- THIS HOUR -->
-
-    <div class="card">
-
-        <div class="card-title">
-            THIS HOUR
-        </div>
-
-        <div
-        class="big"
-        id="thisHour">
-
-            0
-
-        </div>
-
-        <div class="small">
-            MOULDS / HOUR
-        </div>
-
+    <div
+    class="big green"
+    id="total">
+        0
     </div>
 
-
-    <!-- AVERAGE -->
-
-    <div class="card">
-
-        <div class="card-title">
-            AVERAGE / HOUR
-        </div>
-
-        <div
-        class="big"
-        id="average">
-
-            0.0
-
-        </div>
-
-        <div class="small">
-            PRODUCTION RATE
-        </div>
-
-    </div>
-
-
-    <!-- PREVIOUS -->
-
-    <div class="card">
-
-        <div class="card-title">
-            PREVIOUS HOUR
-        </div>
-
-        <div
-        class="big"
-        id="previous">
-
-            0
-
-        </div>
-
-        <div class="small">
-            LAST HOUR
-        </div>
-
-    </div>
-
-
-    <!-- SENSOR -->
-
-    <div class="card">
-
-        <div class="card-title">
-            SENSOR AI1
-        </div>
-
-        <div
-        class="big"
-        id="sensor">
-
-            --
-
-        </div>
-
-        <div class="sensor-bar">
-
-            <div
-            class="sensor-fill"
-            id="sensorFill">
-            </div>
-
-        </div>
-
-        <div
-        class="small"
-        id="voltage">
-
-            -- V
-
-        </div>
-
-    </div>
-
-
-    <!-- CYCLE -->
-
-    <div class="card">
-
-        <div class="card-title">
-            CYCLE TIME
-        </div>
-
-        <div
-        class="big"
-        id="cycle">
-
-            --
-
-        </div>
-
-        <div class="small">
-            SECONDS
-        </div>
-
-    </div>
-
-
-    <!-- SHIFT -->
-
-    <div class="card">
-
-        <div class="card-title">
-            SHIFT
-        </div>
-
-        <div
-        class="big"
-        id="shift">
-
-            --
-
-        </div>
-
-        <div class="small">
-            CURRENT SHIFT
-        </div>
-
-    </div>
-
-
-    <!-- LAST MOULD -->
-
-    <div class="card">
-
-        <div class="card-title">
-            LAST MOULD
-        </div>
-
-        <div
-        class="big"
-        id="lastMould">
-
-            --
-
-        </div>
-
-        <div class="small">
-            LAST PRODUCTION TIME
-        </div>
-
+    <div class="small">
+        CURRENT PC COUNT
     </div>
 
 </div>
 
 
-<!-- ================= GRAPH ================= -->
+<div class="card">
+
+    <div class="card-title">
+        THIS HOUR
+    </div>
+
+    <div
+    class="big"
+    id="thisHour">
+        0
+    </div>
+
+    <div class="small">
+        MOULDS / HOUR
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-title">
+        AVERAGE / HOUR
+    </div>
+
+    <div
+    class="big"
+    id="average">
+        0.0
+    </div>
+
+    <div class="small">
+        PRODUCTION RATE
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-title">
+        PREVIOUS HOUR
+    </div>
+
+    <div
+    class="big"
+    id="previous">
+        0
+    </div>
+
+    <div class="small">
+        LAST HOUR
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-title">
+        SENSOR AI1
+    </div>
+
+    <div
+    class="big"
+    id="sensor">
+        --
+    </div>
+
+    <div class="small"
+    id="voltage">
+        -- V
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-title">
+        CYCLE TIME
+    </div>
+
+    <div
+    class="big"
+    id="cycle">
+        --
+    </div>
+
+    <div class="small">
+        SECONDS
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-title">
+        SHIFT
+    </div>
+
+    <div
+    class="big"
+    id="shift">
+        --
+    </div>
+
+    <div class="small">
+        CURRENT SHIFT
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-title">
+        LAST MOULD
+    </div>
+
+    <div
+    class="big"
+    id="lastMould">
+        --
+    </div>
+
+    <div class="small">
+        LAST PRODUCTION TIME
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- GRAPH -->
 
 <div class="graph-panel">
 
@@ -843,20 +652,12 @@ id="clock">
     <div
     class="graph"
     id="graph">
-
-    </div>
-
-    <div class="graph-note">
-
-        00 → 23 HOUR &nbsp; | &nbsp;
-        BAR = MOULD COUNT
-
     </div>
 
 </div>
 
 
-<!-- ================= RECORDS ================= -->
+<!-- RECORDS -->
 
 <div class="records-panel">
 
@@ -871,38 +672,21 @@ id="clock">
             <thead>
 
                 <tr>
-
                     <th>No.</th>
-
-                    <th>
-                        MOULD COUNT
-                    </th>
-
-                    <th>
-                        MOULD TIME
-                    </th>
-
-                    <th>
-                        SHIFT
-                    </th>
-
-                    <th>
-                        STATUS
-                    </th>
-
+                    <th>MOULD COUNT</th>
+                    <th>MOULD TIME</th>
+                    <th>SHIFT</th>
+                    <th>STATUS</th>
                 </tr>
 
             </thead>
 
-
             <tbody id="records">
 
                 <tr>
-
                     <td colspan="5">
                         Waiting...
                     </td>
-
                 </tr>
 
             </tbody>
@@ -914,7 +698,7 @@ id="clock">
 </div>
 
 
-<!-- ================= SUMMARY ================= -->
+<!-- SUMMARY -->
 
 <div class="summary">
 
@@ -922,129 +706,71 @@ id="clock">
         PRODUCTION SUMMARY
     </div>
 
-
     <div class="summary-row">
-
-        <span>
-            Machine
-        </span>
-
+        <span>Machine</span>
         <span
         class="summary-value"
         id="machine">
-
             --
-
         </span>
-
     </div>
 
-
     <div class="summary-row">
-
-        <span>
-            Today's Total
-        </span>
-
+        <span>Current PC Count</span>
         <span
         class="summary-value"
         id="summaryTotal">
-
             0
-
         </span>
-
     </div>
 
-
     <div class="summary-row">
-
-        <span>
-            Current Hour
-        </span>
-
+        <span>Current Hour</span>
         <span
         class="summary-value"
         id="summaryHour">
-
             0
-
         </span>
-
     </div>
 
-
     <div class="summary-row">
-
-        <span>
-            Previous Hour
-        </span>
-
+        <span>Previous Hour</span>
         <span
         class="summary-value"
         id="summaryPrevious">
-
             0
-
         </span>
-
     </div>
 
-
     <div class="summary-row">
-
-        <span>
-            Average / Hour
-        </span>
-
+        <span>Average / Hour</span>
         <span
         class="summary-value"
         id="summaryAverage">
-
             0.0
-
         </span>
-
     </div>
 
-
     <div class="summary-row">
-
-        <span>
-            Operating Status
-        </span>
-
+        <span>Operating Status</span>
         <span
         class="summary-value"
         id="summaryStatus">
-
             WAITING
-
         </span>
-
     </div>
 
-
     <div class="summary-row">
-
-        <span>
-            Last Cloud Update
-        </span>
-
+        <span>Last Cloud Update</span>
         <span
         class="summary-value"
         id="cloudUpdate">
-
             --
-
         </span>
-
     </div>
 
 </div>
 
-
-<!-- ================= FOOTER ================= -->
 
 <div class="footer">
 
@@ -1052,12 +778,10 @@ id="clock">
 
 </div>
 
-
 </div>
 
 
 <script>
-
 
 /* =================================================
    SUPABASE
@@ -1066,6 +790,12 @@ id="clock">
 const SUPABASE_URL =
 "https://jdidxmwjuecedwmylcqc.supabase.co";
 
+
+/*
+  IMPORTANT:
+  Paste your current Supabase PUBLISHABLE key here.
+  Do NOT use secret/service_role key.
+*/
 
 const SUPABASE_KEY =
 "sb_publishable_nYuMBxR0GyXF3TQhjWvyRg_fdU82MnV";
@@ -1076,90 +806,34 @@ const TABLE =
 
 
 /* =================================================
-   TIME FIX
-   =================================================
-
-   Existing records were saved with local IST
-   clock value inside timestampz.
-
-   This function detects that situation.
-
-   If cloud time is more than 30 minutes ahead
-   of current browser time, subtract 5:30.
-
-   Correct UTC records are left unchanged.
-*/
+   TIME
+   ================================================= */
 
 function normalizeCloudTime(value){
 
-    const raw =
-    new Date(value);
-
-    if(
-        isNaN(raw.getTime())
-    ){
-
-        return raw;
-
-    }
-
-
-    const now =
-    new Date();
-
-
-    const difference =
-    raw.getTime() -
-    now.getTime();
-
-
-    /*
-       Old incorrect records:
-       17:xx stored as UTC
-       browser current 17:xx
-       browser shows 22:xx
-
-       Difference becomes +5:30.
-    */
-
-    if(
-        difference >
-        30 * 60 * 1000
-    ){
-
-        return new Date(
-            raw.getTime() -
-            5.5 * 60 * 60 * 1000
-        );
-
-    }
-
-
-    return raw;
-
-}
-
-
-/* =================================================
-   FORMAT TIME
-   ================================================= */
-
-function formatTime(value){
-
     const d =
-    normalizeCloudTime(
-        value
-    );
-
+    new Date(value);
 
     if(
         isNaN(d.getTime())
     ){
-
-        return "--";
-
+        return d;
     }
 
+    return d;
+}
+
+
+function formatTime(value){
+
+    const d =
+    normalizeCloudTime(value);
+
+    if(
+        isNaN(d.getTime())
+    ){
+        return "--";
+    }
 
     return d.toLocaleTimeString(
         "en-IN",
@@ -1170,30 +844,19 @@ function formatTime(value){
             hour12:false
         }
     );
-
 }
 
-
-/* =================================================
-   FORMAT DATE
-   ================================================= */
 
 function formatDateTime(value){
 
     const d =
-    normalizeCloudTime(
-        value
-    );
-
+    normalizeCloudTime(value);
 
     if(
         isNaN(d.getTime())
     ){
-
         return "--";
-
     }
-
 
     return d.toLocaleString(
         "en-IN",
@@ -1201,21 +864,17 @@ function formatDateTime(value){
             day:"2-digit",
             month:"2-digit",
             year:"numeric",
-
             hour:"2-digit",
             minute:"2-digit",
             second:"2-digit",
-
             hour12:false
         }
     );
-
 }
 
 
 /* =================================================
    PRODUCTION DAY
-   08:30 AM
    ================================================= */
 
 function productionStart(){
@@ -1223,10 +882,8 @@ function productionStart(){
     const now =
     new Date();
 
-
     const start =
     new Date(now);
-
 
     start.setHours(
         8,
@@ -1235,10 +892,8 @@ function productionStart(){
         0
     );
 
-
     if(
-        now <
-        start
+        now < start
     ){
 
         start.setDate(
@@ -1247,9 +902,7 @@ function productionStart(){
 
     }
 
-
     return start;
-
 }
 
 
@@ -1263,29 +916,21 @@ function getShift(date){
     date.getHours() * 60 +
     date.getMinutes();
 
-
     if(
         minutes >= 510 &&
         minutes < 1050
     ){
-
         return "SHIFT-1";
-
     }
-
 
     if(
         minutes >= 1050 ||
         minutes < 60
     ){
-
         return "SHIFT-2";
-
     }
 
-
     return "SHIFT-3";
-
 }
 
 
@@ -1295,31 +940,22 @@ function getShift(date){
 
 function updateClock(){
 
-    const now =
-    new Date();
-
-
     document
-    .getElementById(
-        "clock"
-    )
+    .getElementById("clock")
     .textContent =
 
-    now.toLocaleString(
+    new Date().toLocaleString(
         "en-IN",
         {
             day:"2-digit",
             month:"2-digit",
             year:"numeric",
-
             hour:"2-digit",
             minute:"2-digit",
             second:"2-digit",
-
             hour12:false
         }
     );
-
 }
 
 
@@ -1332,10 +968,8 @@ function drawGraph(rows){
     const start =
     productionStart();
 
-
     const values =
     new Array(24).fill(0);
-
 
     rows.forEach(
         function(row){
@@ -1344,7 +978,6 @@ function drawGraph(rows){
             normalizeCloudTime(
                 row.Update_at
             );
-
 
             const index =
             Math.floor(
@@ -1355,19 +988,14 @@ function drawGraph(rows){
                 3600000
             );
 
-
             if(
                 index >= 0 &&
                 index < 24
             ){
-
                 values[index]++;
-
             }
-
         }
     );
-
 
     const max =
     Math.max(
@@ -1375,9 +1003,7 @@ function drawGraph(rows){
         ...values
     );
 
-
     let html = "";
-
 
     values.forEach(
         function(value,index){
@@ -1391,14 +1017,12 @@ function drawGraph(rows){
                 ) * 250
             );
 
-
             const time =
             new Date(
                 start.getTime() +
                 index *
                 3600000
             );
-
 
             const label =
             time.toLocaleTimeString(
@@ -1410,53 +1034,38 @@ function drawGraph(rows){
                 }
             );
 
-
             html +=
-
             "<div class='bar-wrap'>" +
 
                 "<div class='bar-value' " +
                 "style='bottom:" +
                 (height + 5) +
                 "px'>" +
-
                 value +
-
                 "</div>" +
-
 
                 "<div class='bar' " +
                 "style='height:" +
                 height +
-                "px'>" +
-
-                "</div>" +
-
+                "px'></div>" +
 
                 "<div class='bar-label'>" +
-
                 label +
-
                 "</div>" +
 
             "</div>";
-
         }
     );
 
-
     document
-    .getElementById(
-        "graph"
-    )
+    .getElementById("graph")
     .innerHTML =
     html;
-
 }
 
 
 /* =================================================
-   REFRESH DATA
+   REFRESH
    ================================================= */
 
 async function refresh(){
@@ -1497,8 +1106,7 @@ async function refresh(){
                     SUPABASE_KEY
                 },
 
-                cache:
-                "no-store"
+                cache:"no-store"
             }
         );
 
@@ -1511,7 +1119,6 @@ async function refresh(){
                 "HTTP " +
                 response.status
             );
-
         }
 
 
@@ -1527,43 +1134,31 @@ async function refresh(){
         "SUPABASE : CONNECTED";
 
 
-        const start =
-        productionStart();
-
-
-        const rows =
-        all.filter(
-            function(row){
-
-                const t =
-                normalizeCloudTime(
-                    row.Update_at
-                );
-
-                return t >= start;
-
-            }
-        );
-
+        /* =================================================
+           IMPORTANT:
+           LATEST RECORD = CURRENT PC MOULD COUNT
+           
+           Do NOT apply 08:30 production filter here.
+           
+           Example:
+           PC = 61
+           latest Supabase Mould_count = 61
+           Mobile TOTAL = 61
+           ================================================= */
 
         if(
-            rows.length === 0
+            all.length === 0
         ){
 
             showNoData();
 
             return;
-
         }
 
 
-        /* ============================
-           LATEST
-           ============================ */
-
         const latest =
-        rows[
-            rows.length - 1
+        all[
+            all.length - 1
         ];
 
 
@@ -1580,7 +1175,7 @@ async function refresh(){
 
 
         /* ============================
-           TOTAL
+           CURRENT PC COUNT
            ============================ */
 
         document
@@ -1597,6 +1192,28 @@ async function refresh(){
         )
         .textContent =
         total;
+
+
+        /* ============================
+           PRODUCTION DAY ROWS
+           ============================ */
+
+        const start =
+        productionStart();
+
+
+        const rows =
+        all.filter(
+            function(row){
+
+                const t =
+                normalizeCloudTime(
+                    row.Update_at
+                );
+
+                return t >= start;
+            }
+        );
 
 
         /* ============================
@@ -1700,7 +1317,7 @@ async function refresh(){
         );
 
 
-        const currentHourRows =
+        const thisHour =
         rows.filter(
             function(row){
 
@@ -1710,13 +1327,8 @@ async function refresh(){
                 );
 
                 return t >= hourStart;
-
             }
-        );
-
-
-        const thisHour =
-        currentHourRows.length;
+        ).length;
 
 
         document
@@ -1747,7 +1359,7 @@ async function refresh(){
         );
 
 
-        const previousRows =
+        const previous =
         rows.filter(
             function(row){
 
@@ -1756,18 +1368,12 @@ async function refresh(){
                     row.Update_at
                 );
 
-
                 return(
                     t >= previousStart &&
                     t < hourStart
                 );
-
             }
-        );
-
-
-        const previous =
-        previousRows.length;
+        ).length;
 
 
         document
@@ -1859,7 +1465,7 @@ async function refresh(){
            ============================ */
 
         const last10 =
-        rows
+        all
         .slice(-10)
         .reverse();
 
@@ -1871,7 +1477,6 @@ async function refresh(){
             function(row,index){
 
                 html +=
-
                 "<tr>" +
 
                 "<td>" +
@@ -1906,7 +1511,6 @@ async function refresh(){
                 "</td>" +
 
                 "</tr>";
-
             }
         );
 
@@ -1944,7 +1548,6 @@ async function refresh(){
         )
         .textContent =
         "SUPABASE : ERROR";
-
     }
 
 }
@@ -1959,6 +1562,14 @@ function showNoData(){
     document
     .getElementById(
         "total"
+    )
+    .textContent =
+    "0";
+
+
+    document
+    .getElementById(
+        "summaryTotal"
     )
     .textContent =
     "0";
