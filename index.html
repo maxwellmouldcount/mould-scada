@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport"
-      content="width=device-width,initial-scale=1.0,
-      maximum-scale=1.0,user-scalable=no">
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
 
 <title>MOULD COUNTER SCADA</title>
 
 <style>
+
+/* ================= BASIC ================= */
 
 *{
     box-sizing:border-box;
@@ -26,850 +33,693 @@ body{
     overflow-x:hidden;
 }
 
-.screen{
+
+/* ================= PAGE ================= */
+
+.page{
     width:100%;
-    min-height:100vh;
-    padding:8px;
-    background:#02070a;
+    max-width:900px;
+    margin:auto;
+    padding:10px;
 }
 
 
-/* ================= TOP ================= */
+/* ================= HEADER ================= */
 
-.top{
-    height:74px;
-    display:grid;
-    grid-template-columns:24% 52% 24%;
-    border-bottom:1px solid #34444c;
-}
+.header{
+    text-align:center;
 
-.company{
-    color:#18dfff;
-    font-weight:bold;
-    font-size:15px;
-    line-height:17px;
-}
+    padding:12px 5px;
 
-.shift{
-    color:#ffe500;
-    font-weight:bold;
-    font-size:13px;
-    margin-top:7px;
+    border-bottom:
+    2px solid #18dfff;
 }
 
 .title{
-    text-align:center;
-    font-size:25px;
-    font-weight:bold;
-    padding-top:2px;
-}
-
-.date{
-    text-align:right;
-    color:#ffe500;
-    font-weight:bold;
-    font-size:14px;
-}
-
-.status{
-    text-align:right;
-    color:#00ff42;
-    font-weight:bold;
-    font-size:13px;
-    margin-top:7px;
-}
-
-
-/* ================= MAIN ================= */
-
-.main{
-    height:calc(100vh - 123px);
-    min-height:650px;
-
-    display:grid;
-
-    grid-template-columns:
-        46%
-        44%
-        10%;
-
-    gap:8px;
-
-    padding-top:8px;
-}
-
-.left,
-.center,
-.right{
-    min-width:0;
-
-    display:flex;
-    flex-direction:column;
-
-    gap:7px;
-}
-
-
-/* ================= PANEL ================= */
-
-.panel{
-    background:#050d11;
-
-    border:1px solid #2b3b43;
-
-    border-radius:5px;
-
-    overflow:hidden;
-}
-
-.panel-title{
-    text-align:center;
-
     color:#18dfff;
 
-    font-size:15px;
+    font-size:28px;
 
     font-weight:bold;
-
-    padding:7px 3px;
 }
 
-
-/* ================= TOTAL ================= */
-
-.total-panel{
-    height:140px;
-}
-
-.total-number{
-    text-align:center;
-
-    color:#00ff3c;
-
-    font-size:50px;
-
-    font-weight:bold;
-
-    line-height:55px;
-}
-
-.yellow-row{
-    display:flex;
-
-    justify-content:space-around;
-
-    color:#ffe500;
+.subtitle{
+    color:#8d9aa0;
 
     font-size:14px;
 
-    font-weight:bold;
-
-    padding-top:8px;
+    margin-top:5px;
 }
 
 
-/* ================= SENSOR ================= */
+/* ================= STATUS ================= */
 
-.sensor-panel{
-    height:140px;
-}
+.status-row{
 
-.sensor-body{
     display:grid;
 
     grid-template-columns:
-        1fr 1fr 1fr;
+    1fr 1fr;
 
-    align-items:center;
+    gap:10px;
 
-    height:92px;
+    margin-top:12px;
 }
 
-.dot{
-    width:16px;
-    height:16px;
+.status-box{
 
-    border-radius:50%;
+    background:#050d11;
 
-    background:#aaa;
+    border:
+    1px solid #2b3b43;
 
-    margin:auto;
-}
+    border-radius:12px;
 
-.sensor-state{
+    padding:15px;
+
     text-align:center;
-
-    color:#ff3131;
-
-    font-size:20px;
-
-    font-weight:bold;
-}
-
-.voltage{
-    text-align:center;
-
-    color:#00ff42;
 
     font-size:18px;
 
     font-weight:bold;
 }
 
-
-/* ================= RECORDS ================= */
-
-.records-panel{
-    flex:1;
-
-    min-height:280px;
+.connected{
+    color:#00ff42;
 }
 
-.table-wrap{
-    padding:0 7px 7px;
+.running{
+    color:#ffe500;
+}
 
-    height:calc(100% - 34px);
+
+/* ================= CLOCK ================= */
+
+.clock{
+
+    background:#050d11;
+
+    border:
+    1px solid #2b3b43;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    color:#ffe500;
+
+    font-size:25px;
+
+    font-weight:bold;
+
+    padding:13px;
+
+    margin-top:10px;
+}
+
+
+/* ================= CARDS ================= */
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:
+    1fr 1fr;
+
+    gap:10px;
+
+    margin-top:10px;
+}
+
+.card{
+
+    background:#050d11;
+
+    border:
+    1px solid #263942;
+
+    border-radius:12px;
+
+    padding:17px 12px;
+
+    text-align:center;
+
+    min-height:125px;
+}
+
+.card-title{
+
+    color:#18dfff;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+}
+
+.big{
+
+    color:#18dfff;
+
+    font-size:42px;
+
+    font-weight:bold;
+
+    margin-top:15px;
+}
+
+.green{
+
+    color:#00ff42;
+}
+
+.yellow{
+
+    color:#ffe500;
+}
+
+.small{
+
+    color:#8d9aa0;
+
+    font-size:13px;
+
+    margin-top:8px;
+}
+
+
+/* ================= SENSOR ================= */
+
+.sensor-bar{
+
+    width:90%;
+
+    height:13px;
+
+    background:#26343a;
+
+    border-radius:10px;
+
+    margin:
+    15px auto 5px;
 
     overflow:hidden;
 }
 
-table{
-    width:100%;
+.sensor-fill{
 
-    border-collapse:collapse;
+    height:100%;
 
-    font-size:11px;
-}
+    width:0%;
 
-th,
-td{
-    border:1px solid #34444c;
+    background:#16d83b;
 
-    padding:6px 5px;
+    border-radius:10px;
 
-    text-align:left;
-}
-
-th{
-    background:#0a151b;
-
-    color:#eee;
-}
-
-td.valid{
-    color:#00ff42;
-}
-
-td.center{
-    text-align:center;
 }
 
 
 /* ================= GRAPH ================= */
 
 .graph-panel{
-    flex:1;
 
-    min-height:430px;
+    background:#050d11;
+
+    border:
+    1px solid #263942;
+
+    border-radius:12px;
+
+    margin-top:10px;
+
+    padding:12px;
+
+}
+
+.section-title{
+
+    color:#18dfff;
+
+    text-align:center;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
 }
 
 .graph{
-    height:calc(100% - 35px);
 
-    min-height:390px;
-
-    padding:
-        5px 8px 25px;
+    height:300px;
 
     display:flex;
 
     align-items:flex-end;
 
-    gap:2px;
+    gap:3px;
 
-    border-top:
-        1px solid #25343b;
+    padding:
+    15px 5px 35px;
+
+    border-bottom:
+    1px solid #34444c;
+
 }
 
 .bar-wrap{
-    height:100%;
 
     flex:1;
+
+    height:100%;
 
     position:relative;
 
     display:flex;
 
-    align-items:flex-end;
+    justify-content:flex-end;
 
-    justify-content:center;
+    align-items:center;
+
+    flex-direction:column;
 }
 
 .bar{
-    width:72%;
+
+    width:75%;
 
     min-height:2px;
 
     background:#16d83b;
+
+    border-radius:
+    3px 3px 0 0;
 }
 
 .bar-value{
+
     position:absolute;
 
-    color:#eee;
+    color:#ddd;
 
-    font-size:8px;
+    font-size:10px;
 
-    left:50%;
-
-    transform:
-        translateX(-50%);
+    bottom:0;
 }
 
 .bar-label{
+
     position:absolute;
 
-    bottom:-24px;
+    bottom:-30px;
 
-    font-size:7px;
+    color:#9aa5aa;
 
-    color:#aaa;
+    font-size:8px;
 
     transform:
-        rotate(-90deg);
+    rotate(-45deg);
 
     white-space:nowrap;
 }
 
+.graph-note{
 
-/* ================= PRODUCTION ================= */
+    text-align:center;
 
-.production{
-    height:172px;
+    color:#89979e;
+
+    font-size:13px;
+
+    margin-top:25px;
 }
 
-.prod-row{
+
+/* ================= RECORD TABLE ================= */
+
+.records-panel{
+
+    background:#050d11;
+
+    border:
+    1px solid #263942;
+
+    border-radius:12px;
+
+    margin-top:10px;
+
+    padding:10px;
+
+}
+
+.table-container{
+
+    width:100%;
+
+    overflow-x:auto;
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    table-layout:fixed;
+
+    min-width:560px;
+
+    font-size:13px;
+}
+
+th{
+
+    background:#0b171d;
+
+    color:#18dfff;
+
+    border:
+    1px solid #34444c;
+
+    padding:9px 5px;
+
+    white-space:nowrap;
+}
+
+td{
+
+    border:
+    1px solid #34444c;
+
+    padding:8px 5px;
+
+    text-align:center;
+
+    white-space:nowrap;
+}
+
+.valid{
+
+    color:#00ff42;
+
+    font-weight:bold;
+}
+
+
+/* ================= SUMMARY ================= */
+
+.summary{
+
+    background:#050d11;
+
+    border:
+    1px solid #263942;
+
+    border-radius:12px;
+
+    margin-top:10px;
+
+    padding:12px;
+}
+
+.summary-row{
+
     display:flex;
 
     justify-content:space-between;
 
-    padding:7px 7px;
+    padding:11px 3px;
 
     border-bottom:
-        1px solid #26343a;
-
-    font-size:11px;
-}
-
-.prod-row b{
-    color:#18dfff;
+    1px solid #26343a;
 
     font-size:16px;
 }
 
+.summary-row:last-child{
 
-/* ================= SHIFT ================= */
-
-.shift-panel{
-    height:120px;
+    border-bottom:0;
 }
 
-.shift-row{
-    display:flex;
-
-    justify-content:space-between;
-
-    padding:7px;
-
-    font-size:9px;
-}
-
-.shift-row b{
-    color:#00ff42;
-
-    font-size:15px;
-}
-
-
-/* ================= IO ================= */
-
-.io-panel{
-    flex:1;
-
-    min-height:300px;
-}
-
-.io-item{
-    margin:7px;
-
-    border:
-        1px solid #304149;
-
-    border-radius:5px;
-
-    padding:17px 5px;
-
-    min-height:65px;
-
-    font-size:9px;
-
-    position:relative;
-}
-
-.io-dot{
-    position:absolute;
-
-    right:-5px;
-
-    top:50%;
-
-    width:9px;
-
-    height:9px;
-
-    border-radius:50%;
-
-    background:#aaa;
-}
-
-
-/* ================= BOTTOM ================= */
-
-.bottom{
-    height:38px;
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(6,1fr);
-
-    gap:7px;
-
-    padding-top:7px;
-}
-
-.btn{
-    border:0;
-
-    border-radius:3px;
-
-    color:#fff;
+.summary-value{
 
     font-weight:bold;
 
-    font-size:11px;
-}
-
-.start{
-    background:#008b17;
-}
-
-.stop{
-    background:#b00000;
-}
-
-.reset{
-    background:#9b6200;
-}
-
-.report{
-    background:#17488c;
-}
-
-.history{
-    background:#642078;
-}
-
-.settings{
-    background:#075a60;
+    color:#eee;
 }
 
 
 /* ================= FOOTER ================= */
 
 .footer{
-    position:fixed;
 
-    bottom:2px;
+    text-align:center;
 
-    left:8px;
+    color:#707d82;
 
-    right:8px;
+    font-size:12px;
 
-    display:flex;
-
-    justify-content:space-between;
-
-    color:#89979e;
-
-    font-size:9px;
-
-    pointer-events:none;
+    padding:18px 5px;
 }
 
 
-/* =================================================
-   MOBILE
-   ================================================= */
+/* ================= MOBILE ================= */
 
-@media(max-width:700px){
+@media(max-width:600px){
 
-    .screen{
-        width:100vw;
+    .page{
 
-        min-width:0;
-
-        padding:4px;
+        padding:7px;
     }
-
-
-    .top{
-        height:56px;
-
-        grid-template-columns:
-            28% 44% 28%;
-    }
-
-
-    .company{
-        font-size:8px;
-
-        line-height:9px;
-    }
-
-
-    .shift{
-        font-size:7px;
-
-        margin-top:3px;
-    }
-
 
     .title{
-        font-size:13px;
 
-        padding-top:1px;
+        font-size:24px;
     }
 
+    .subtitle{
 
-    .date{
-        font-size:8px;
-    }
-
-
-    .status{
-        font-size:7px;
-
-        margin-top:3px;
-    }
-
-
-    .main{
-
-        height:auto;
-
-        min-height:
-            calc(100vh - 95px);
-
-        grid-template-columns:
-            45% 45% 10%;
-
-        gap:3px;
-
-        padding-top:4px;
-    }
-
-
-    .left,
-    .center,
-    .right{
-        gap:3px;
-    }
-
-
-    .panel{
-        border-radius:3px;
-    }
-
-
-    .panel-title{
-        font-size:8px;
-
-        padding:4px 2px;
-    }
-
-
-    .total-panel{
-        height:105px;
-    }
-
-
-    .total-number{
-        font-size:35px;
-
-        line-height:38px;
-    }
-
-
-    .yellow-row{
-        font-size:7px;
-
-        padding-top:5px;
-    }
-
-
-    .sensor-panel{
-        height:105px;
-    }
-
-
-    .sensor-body{
-        height:72px;
-    }
-
-
-    .dot{
-        width:9px;
-
-        height:9px;
-    }
-
-
-    .sensor-state{
         font-size:12px;
     }
 
+    .status-box{
 
-    .voltage{
-        font-size:10px;
+        font-size:15px;
+
+        padding:13px 5px;
     }
 
+    .clock{
 
-    .records-panel{
-        min-height:250px;
+        font-size:21px;
     }
 
+    .card{
 
-    .table-wrap{
-        padding:
-            0 3px 3px;
+        min-height:120px;
+
+        padding:14px 5px;
     }
 
+    .card-title{
 
-    table{
-        font-size:6px;
+        font-size:14px;
     }
 
+    .big{
 
-    th,
-    td{
-        padding:3px 2px;
+        font-size:36px;
     }
-
-
-    .graph-panel{
-        min-height:360px;
-    }
-
 
     .graph{
-        min-height:330px;
 
-        height:
-            calc(100% - 25px);
-
-        padding:
-            3px 3px 18px;
+        height:280px;
     }
 
+}
 
-    .bar-value{
-        font-size:6px;
+
+/* ================= VERY SMALL MOBILE ================= */
+
+@media(max-width:380px){
+
+    .title{
+
+        font-size:20px;
     }
 
+    .card-title{
 
-    .bar-label{
-        font-size:5px;
-
-        bottom:-16px;
+        font-size:12px;
     }
 
+    .big{
 
-    .production{
-        height:130px;
+        font-size:32px;
     }
 
+    .small{
 
-    .prod-row{
-        padding:5px 3px;
-
-        font-size:6px;
-    }
-
-
-    .prod-row b{
-        font-size:10px;
-    }
-
-
-    .shift-panel{
-        height:100px;
-    }
-
-
-    .shift-row{
-        padding:5px 3px;
-
-        font-size:5px;
-    }
-
-
-    .shift-row b{
-        font-size:9px;
-    }
-
-
-    .io-item{
-        margin:3px;
-
-        padding:13px 2px;
-
-        min-height:55px;
-
-        font-size:5px;
-    }
-
-
-    .io-dot{
-        width:6px;
-
-        height:6px;
-    }
-
-
-    .bottom{
-        height:28px;
-
-        gap:2px;
-
-        padding-top:3px;
-    }
-
-
-    .btn{
-        font-size:5px;
-    }
-
-
-    .footer{
-        font-size:5px;
-
-        bottom:0;
-
-        left:4px;
-
-        right:4px;
+        font-size:11px;
     }
 
 }
 
 </style>
+
 </head>
 
 
 <body>
 
-<div class="screen">
+<div class="page">
 
 
 <!-- ================= HEADER ================= -->
 
-<div class="top">
+<div class="header">
 
-    <div>
+    <div class="title">
+        MOULD COUNTER SCADA
+    </div>
 
-        <div class="company">
-            MAXWELL AUTO COMPONENTS<br>
-            COIMBATORE
-        </div>
+    <div class="subtitle">
+        MAXWELL AUTO COMPONENTS • CLOUD MOBILE SCADA
+    </div>
 
-        <div
-            class="shift"
-            id="shiftHeader">
-            SHIFT: --
-        </div>
+</div>
+
+
+<!-- ================= STATUS ================= -->
+
+<div class="status-row">
+
+    <div
+    class="status-box connected"
+    id="supabaseStatus">
+
+        SUPABASE :
+        CONNECTING
 
     </div>
 
 
-    <div>
+    <div
+    class="status-box running"
+    id="scadaStatus">
 
-        <div class="title">
-            MOULD COUNTER SCADA
-        </div>
-
-        <div
-            class="status"
-            id="scadaStatus">
-            SCADA STATUS : --
-        </div>
-
-    </div>
-
-
-    <div>
-
-        <div
-            class="date"
-            id="clock">
-            --
-        </div>
-
-        <div
-            class="status"
-            id="modbusStatus">
-            SUPABASE : --
-        </div>
+        SCADA :
+        WAITING
 
     </div>
 
 </div>
 
 
-<!-- ================= MAIN ================= -->
+<!-- ================= CLOCK ================= -->
 
-<div class="main">
+<div
+class="clock"
+id="clock">
+
+    --
+
+</div>
 
 
-<!-- ================= LEFT ================= -->
+<!-- ================= MAIN CARDS ================= -->
 
-<div class="left">
+<div class="cards">
 
 
     <!-- TOTAL -->
 
-    <div class="panel total-panel">
+    <div class="card">
 
-        <div class="panel-title">
+        <div class="card-title">
             TOTAL MOULD COUNT
         </div>
 
         <div
-            class="total-number"
-            id="total">
+        class="big green"
+        id="total">
+
             0
+
         </div>
 
-        <div class="yellow-row">
+        <div class="small">
+            TODAY PRODUCTION
+        </div>
 
-            <span id="lastTime">
-                --
-            </span>
+    </div>
 
-            <span id="cycle">
-                -- SEC
-            </span>
 
+    <!-- THIS HOUR -->
+
+    <div class="card">
+
+        <div class="card-title">
+            THIS HOUR
+        </div>
+
+        <div
+        class="big"
+        id="thisHour">
+
+            0
+
+        </div>
+
+        <div class="small">
+            MOULDS / HOUR
+        </div>
+
+    </div>
+
+
+    <!-- AVERAGE -->
+
+    <div class="card">
+
+        <div class="card-title">
+            AVERAGE / HOUR
+        </div>
+
+        <div
+        class="big"
+        id="average">
+
+            0.0
+
+        </div>
+
+        <div class="small">
+            PRODUCTION RATE
+        </div>
+
+    </div>
+
+
+    <!-- PREVIOUS -->
+
+    <div class="card">
+
+        <div class="card-title">
+            PREVIOUS HOUR
+        </div>
+
+        <div
+        class="big"
+        id="previous">
+
+            0
+
+        </div>
+
+        <div class="small">
+            LAST HOUR
         </div>
 
     </div>
@@ -877,189 +727,58 @@ td.center{
 
     <!-- SENSOR -->
 
-    <div class="panel sensor-panel">
+    <div class="card">
 
-        <div class="panel-title">
-            SENSOR STATUS (AI1)
-        </div>
-
-        <div class="sensor-body">
-
-            <div
-                class="dot"
-                id="sensorDot">
-            </div>
-
-            <div
-                class="sensor-state"
-                id="sensorState">
-                --
-            </div>
-
-            <div
-                class="voltage"
-                id="voltage">
-                -- V
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- RECORDS -->
-
-    <div class="panel records-panel">
-
-        <div class="panel-title">
-            LAST 10 MOULD RECORDS
-        </div>
-
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>No.</th>
-
-                        <th>
-                            MOULD COUNT
-                        </th>
-
-                        <th>
-                            MOULD TIME
-                        </th>
-
-                        <th>
-                            SHIFT
-                        </th>
-
-                        <th>
-                            STATUS
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="records">
-
-                    <tr>
-                        <td colspan="5">
-                            Waiting...
-                        </td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= CENTER ================= -->
-
-<div class="center">
-
-    <div class="panel graph-panel">
-
-        <div class="panel-title">
-            MOULD COUNT TREND (TODAY)
+        <div class="card-title">
+            SENSOR AI1
         </div>
 
         <div
-            class="graph"
-            id="graph">
+        class="big"
+        id="sensor">
+
+            --
+
+        </div>
+
+        <div class="sensor-bar">
+
+            <div
+            class="sensor-fill"
+            id="sensorFill">
+            </div>
+
+        </div>
+
+        <div
+        class="small"
+        id="voltage">
+
+            -- V
+
         </div>
 
     </div>
 
-</div>
 
+    <!-- CYCLE -->
 
-<!-- ================= RIGHT ================= -->
+    <div class="card">
 
-<div class="right">
-
-
-    <!-- PRODUCTION -->
-
-    <div class="panel production">
-
-        <div class="panel-title">
-            PRODUCTION
+        <div class="card-title">
+            CYCLE TIME
         </div>
 
+        <div
+        class="big"
+        id="cycle">
 
-        <div class="prod-row">
-
-            <span>
-                TODAY TOTAL
-            </span>
-
-            <b id="today">
-                0
-            </b>
+            --
 
         </div>
 
-
-        <div class="prod-row">
-
-            <span>
-                THIS SHIFT
-            </span>
-
-            <b id="thisShift">
-                0
-            </b>
-
-        </div>
-
-
-        <div class="prod-row">
-
-            <span>
-                THIS HOUR
-            </span>
-
-            <b id="thisHour">
-                0
-            </b>
-
-        </div>
-
-
-        <div class="prod-row">
-
-            <span>
-                PREV. HOUR
-            </span>
-
-            <b id="prevHour">
-                0
-            </b>
-
-        </div>
-
-
-        <div class="prod-row">
-
-            <span>
-                AVERAGE / HOUR
-            </span>
-
-            <b id="average">
-                0.0
-            </b>
-
+        <div class="small">
+            SECONDS
         </div>
 
     </div>
@@ -1067,167 +786,281 @@ td.center{
 
     <!-- SHIFT -->
 
-    <div class="panel shift-panel">
+    <div class="card">
 
-        <div class="panel-title">
-            SHIFT WISE COUNT
+        <div class="card-title">
+            SHIFT
         </div>
 
+        <div
+        class="big"
+        id="shift">
 
-        <div class="shift-row">
-
-            <span>
-                SHIFT-1
-            </span>
-
-            <b id="s1">
-                0
-            </b>
+            --
 
         </div>
 
-
-        <div class="shift-row">
-
-            <span>
-                SHIFT-2
-            </span>
-
-            <b id="s2">
-                0
-            </b>
-
-        </div>
-
-
-        <div class="shift-row">
-
-            <span>
-                SHIFT-3
-            </span>
-
-            <b id="s3">
-                0
-            </b>
-
+        <div class="small">
+            CURRENT SHIFT
         </div>
 
     </div>
 
 
-    <!-- IO -->
+    <!-- LAST MOULD -->
 
-    <div class="panel io-panel">
+    <div class="card">
 
-        <div class="panel-title">
-            I/O STATUS
+        <div class="card-title">
+            LAST MOULD
         </div>
 
+        <div
+        class="big"
+        id="lastMould">
 
-        <div class="io-item">
-
-            AI1 (MOULD SENSOR)
-
-            <span class="io-dot">
-            </span>
-
-        </div>
-
-
-        <div class="io-item">
-
-            AI2
-
-            <span class="io-dot">
-            </span>
+            --
 
         </div>
 
-
-        <div class="io-item">
-
-            AI3
-
-            <span class="io-dot">
-            </span>
-
-        </div>
-
-
-        <div class="io-item">
-
-            AI4
-
-            <span class="io-dot">
-            </span>
-
+        <div class="small">
+            LAST PRODUCTION TIME
         </div>
 
     </div>
 
 </div>
 
-</div>
 
+<!-- ================= GRAPH ================= -->
 
-<!-- ================= BOTTOM ================= -->
+<div class="graph-panel">
 
-<div class="bottom">
+    <div class="section-title">
+        HOURLY MOULD PRODUCTION
+    </div>
 
-    <button class="btn start">
-        START
-    </button>
+    <div
+    class="graph"
+    id="graph">
 
-    <button class="btn stop">
-        STOP
-    </button>
+    </div>
 
-    <button class="btn reset">
-        RESET COUNT
-    </button>
+    <div class="graph-note">
 
-    <button class="btn report">
-        REPORT
-    </button>
+        00 → 23 HOUR &nbsp; | &nbsp;
+        BAR = MOULD COUNT
 
-    <button class="btn history">
-        HISTORY
-    </button>
-
-    <button class="btn settings">
-        SETTINGS
-    </button>
+    </div>
 
 </div>
 
+
+<!-- ================= RECORDS ================= -->
+
+<div class="records-panel">
+
+    <div class="section-title">
+        LAST 10 MOULD RECORDS
+    </div>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No.</th>
+
+                    <th>
+                        MOULD COUNT
+                    </th>
+
+                    <th>
+                        MOULD TIME
+                    </th>
+
+                    <th>
+                        SHIFT
+                    </th>
+
+                    <th>
+                        STATUS
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="records">
+
+                <tr>
+
+                    <td colspan="5">
+                        Waiting...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- ================= SUMMARY ================= -->
+
+<div class="summary">
+
+    <div class="section-title">
+        PRODUCTION SUMMARY
+    </div>
+
+
+    <div class="summary-row">
+
+        <span>
+            Machine
+        </span>
+
+        <span
+        class="summary-value"
+        id="machine">
+
+            --
+
+        </span>
+
+    </div>
+
+
+    <div class="summary-row">
+
+        <span>
+            Today's Total
+        </span>
+
+        <span
+        class="summary-value"
+        id="summaryTotal">
+
+            0
+
+        </span>
+
+    </div>
+
+
+    <div class="summary-row">
+
+        <span>
+            Current Hour
+        </span>
+
+        <span
+        class="summary-value"
+        id="summaryHour">
+
+            0
+
+        </span>
+
+    </div>
+
+
+    <div class="summary-row">
+
+        <span>
+            Previous Hour
+        </span>
+
+        <span
+        class="summary-value"
+        id="summaryPrevious">
+
+            0
+
+        </span>
+
+    </div>
+
+
+    <div class="summary-row">
+
+        <span>
+            Average / Hour
+        </span>
+
+        <span
+        class="summary-value"
+        id="summaryAverage">
+
+            0.0
+
+        </span>
+
+    </div>
+
+
+    <div class="summary-row">
+
+        <span>
+            Operating Status
+        </span>
+
+        <span
+        class="summary-value"
+        id="summaryStatus">
+
+            WAITING
+
+        </span>
+
+    </div>
+
+
+    <div class="summary-row">
+
+        <span>
+            Last Cloud Update
+        </span>
+
+        <span
+        class="summary-value"
+        id="cloudUpdate">
+
+            --
+
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- ================= FOOTER ================= -->
 
 <div class="footer">
 
-    <span>
-        USER : ADMIN
-    </span>
-
-    <span>
-        DATA LOGGING : ON
-    </span>
-
-    <span>
-        SUPABASE : ON
-    </span>
-
-    <span id="machineFooter">
-        MACHINE : --
-    </span>
+    AUTO REFRESH : 2 SEC • SUPABASE CLOUD
 
 </div>
+
 
 </div>
 
 
 <script>
 
+
 /* =================================================
-   SUPABASE SETTINGS
+   SUPABASE
    ================================================= */
 
 const SUPABASE_URL =
@@ -1243,68 +1076,90 @@ const TABLE =
 
 
 /* =================================================
-   HELPER
-   ================================================= */
+   TIME FIX
+   =================================================
 
-function setText(id,value){
+   Existing records were saved with local IST
+   clock value inside timestampz.
 
-    const e =
-        document.getElementById(id);
+   This function detects that situation.
 
-    if(e){
+   If cloud time is more than 30 minutes ahead
+   of current browser time, subtract 5:30.
 
-        e.textContent =
-            value;
+   Correct UTC records are left unchanged.
+*/
+
+function normalizeCloudTime(value){
+
+    const raw =
+    new Date(value);
+
+    if(
+        isNaN(raw.getTime())
+    ){
+
+        return raw;
 
     }
 
-}
-
-
-/* =================================================
-   PRODUCTION DAY
-   08:30 AM
-   ================================================= */
-
-function productionStart(){
 
     const now =
-        new Date();
+    new Date();
 
-    const start =
-        new Date(now);
 
-    start.setHours(
-        8,
-        30,
-        0,
-        0
-    );
+    const difference =
+    raw.getTime() -
+    now.getTime();
 
-    if(now < start){
 
-        start.setDate(
-            start.getDate()-1
+    /*
+       Old incorrect records:
+       17:xx stored as UTC
+       browser current 17:xx
+       browser shows 22:xx
+
+       Difference becomes +5:30.
+    */
+
+    if(
+        difference >
+        30 * 60 * 1000
+    ){
+
+        return new Date(
+            raw.getTime() -
+            5.5 * 60 * 60 * 1000
         );
 
     }
 
-    return start;
+
+    return raw;
 
 }
 
 
 /* =================================================
-   TIME
+   FORMAT TIME
    ================================================= */
 
-function fmtTime(value){
-
-    if(!value)
-        return "--";
+function formatTime(value){
 
     const d =
-        new Date(value);
+    normalizeCloudTime(
+        value
+    );
+
+
+    if(
+        isNaN(d.getTime())
+    ){
+
+        return "--";
+
+    }
+
 
     return d.toLocaleTimeString(
         "en-IN",
@@ -1320,19 +1175,98 @@ function fmtTime(value){
 
 
 /* =================================================
-   SHIFT
+   FORMAT DATE
    ================================================= */
 
-function shiftFromDate(d){
+function formatDateTime(value){
 
-    const m =
-        d.getHours()*60 +
-        d.getMinutes();
+    const d =
+    normalizeCloudTime(
+        value
+    );
 
 
     if(
-        m >= 510 &&
-        m < 1050
+        isNaN(d.getTime())
+    ){
+
+        return "--";
+
+    }
+
+
+    return d.toLocaleString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric",
+
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+
+            hour12:false
+        }
+    );
+
+}
+
+
+/* =================================================
+   PRODUCTION DAY
+   08:30 AM
+   ================================================= */
+
+function productionStart(){
+
+    const now =
+    new Date();
+
+
+    const start =
+    new Date(now);
+
+
+    start.setHours(
+        8,
+        30,
+        0,
+        0
+    );
+
+
+    if(
+        now <
+        start
+    ){
+
+        start.setDate(
+            start.getDate() - 1
+        );
+
+    }
+
+
+    return start;
+
+}
+
+
+/* =================================================
+   SHIFT
+   ================================================= */
+
+function getShift(date){
+
+    const minutes =
+    date.getHours() * 60 +
+    date.getMinutes();
+
+
+    if(
+        minutes >= 510 &&
+        minutes < 1050
     ){
 
         return "SHIFT-1";
@@ -1341,8 +1275,8 @@ function shiftFromDate(d){
 
 
     if(
-        m >= 1050 ||
-        m < 60
+        minutes >= 1050 ||
+        minutes < 60
     ){
 
         return "SHIFT-2";
@@ -1361,528 +1295,30 @@ function shiftFromDate(d){
 
 function updateClock(){
 
-    setText(
-        "clock",
+    const now =
+    new Date();
 
-        new Date().toLocaleString(
-            "en-IN",
-            {
-                day:"2-digit",
-                month:"2-digit",
-                year:"numeric",
-                hour:"2-digit",
-                minute:"2-digit",
-                second:"2-digit",
-                hour12:false
-            }
-        )
+
+    document
+    .getElementById(
+        "clock"
+    )
+    .textContent =
+
+    now.toLocaleString(
+        "en-IN",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric",
+
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit",
+
+            hour12:false
+        }
     );
-
-}
-
-
-/* =================================================
-   REFRESH SCADA
-   ================================================= */
-
-async function refresh(){
-
-    try{
-
-        const url =
-            SUPABASE_URL +
-            "/rest/v1/" +
-            TABLE +
-            "?select=id,Machine_name,Mould_count,Shift,Status,Update_at" +
-            "&order=Update_at.asc" +
-            "&limit=1000";
-
-
-        const response =
-            await fetch(
-                url,
-                {
-                    headers:{
-                        apikey:
-                            SUPABASE_KEY,
-
-                        Authorization:
-                            "Bearer " +
-                            SUPABASE_KEY
-                    },
-
-                    cache:
-                        "no-store"
-                }
-            );
-
-
-        if(!response.ok){
-
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
-
-        }
-
-
-        const all =
-            await response.json();
-
-
-        setText(
-            "modbusStatus",
-            "SUPABASE : CONNECTED"
-        );
-
-
-        const start =
-            productionStart();
-
-
-        const rows =
-            all.filter(
-                x =>
-                new Date(
-                    x.Update_at
-                ) >= start
-            );
-
-
-        /* ==============================
-           NO DATA
-           ============================== */
-
-        if(!rows.length){
-
-            setText(
-                "total",
-                "0"
-            );
-
-            setText(
-                "today",
-                "0"
-            );
-
-            setText(
-                "thisShift",
-                "0"
-            );
-
-            setText(
-                "thisHour",
-                "0"
-            );
-
-            setText(
-                "prevHour",
-                "0"
-            );
-
-            setText(
-                "average",
-                "0.0"
-            );
-
-            setText(
-                "shiftHeader",
-                "SHIFT: --"
-            );
-
-            setText(
-                "scadaStatus",
-                "SCADA STATUS : WAITING"
-            );
-
-            drawGraph([]);
-
-            return;
-
-        }
-
-
-        /* ==============================
-           LATEST RECORD
-           ============================== */
-
-        const latest =
-            rows[rows.length-1];
-
-
-        const latestTime =
-            new Date(
-                latest.Update_at
-            );
-
-
-        const total =
-            Number(
-                latest.Mould_count || 0
-            );
-
-
-        setText(
-            "total",
-            total
-        );
-
-
-        setText(
-            "today",
-            total
-        );
-
-
-        /* ==============================
-           MACHINE
-           ============================== */
-
-        setText(
-            "machineFooter",
-            "MACHINE : " +
-            (latest.Machine_name || "--")
-        );
-
-
-        /* ==============================
-           SHIFT
-           ============================== */
-
-        const currentShift =
-            latest.Shift ||
-            shiftFromDate(
-                latestTime
-            );
-
-
-        setText(
-            "shiftHeader",
-            "SHIFT: " +
-            currentShift
-        );
-
-
-        /* ==============================
-           STATUS
-           ============================== */
-
-        setText(
-            "scadaStatus",
-            "SCADA STATUS : " +
-            (latest.Status || "--")
-        );
-
-
-        /* ==============================
-           LAST MOULD
-           ============================== */
-
-        setText(
-            "lastTime",
-            fmtTime(
-                latest.Update_at
-            )
-        );
-
-
-        /*
-           Current Supabase table does not
-           contain cycle-time column.
-        */
-
-        setText(
-            "cycle",
-            "-- SEC"
-        );
-
-
-        /* ==============================
-           CURRENT HOUR
-           ============================== */
-
-        const now =
-            new Date();
-
-
-        const hourStart =
-            new Date(now);
-
-
-        hourStart.setMinutes(
-            0,
-            0,
-            0
-        );
-
-
-        const thisHourRows =
-            rows.filter(
-                x =>
-                new Date(
-                    x.Update_at
-                ) >= hourStart
-            );
-
-
-        setText(
-            "thisHour",
-            thisHourRows.length
-        );
-
-
-        /* ==============================
-           PREVIOUS HOUR
-           ============================== */
-
-        const previousStart =
-            new Date(
-                hourStart.getTime()
-                - 3600000
-            );
-
-
-        const previousRows =
-            rows.filter(
-                x => {
-
-                    const t =
-                        new Date(
-                            x.Update_at
-                        );
-
-                    return (
-                        t >= previousStart &&
-                        t < hourStart
-                    );
-
-                }
-            );
-
-
-        setText(
-            "prevHour",
-            previousRows.length
-        );
-
-
-        /* ==============================
-           CURRENT SHIFT
-           ============================== */
-
-        const shiftRows =
-            rows.filter(
-                x => {
-
-                    const s =
-                        x.Shift ||
-                        shiftFromDate(
-                            new Date(
-                                x.Update_at
-                            )
-                        );
-
-                    return String(s)
-                        .toUpperCase() ===
-                        String(currentShift)
-                        .toUpperCase();
-
-                }
-            );
-
-
-        setText(
-            "thisShift",
-            shiftRows.length
-        );
-
-
-        /* ==============================
-           AVERAGE
-           ============================== */
-
-        const hours =
-            Math.max(
-                1,
-                (now-start)/3600000
-            );
-
-
-        setText(
-            "average",
-            (
-                total /
-                hours
-            ).toFixed(1)
-        );
-
-
-        /* ==============================
-           SENSOR
-           ============================== */
-
-        setText(
-            "sensorState",
-            "--"
-        );
-
-
-        setText(
-            "voltage",
-            "-- V"
-        );
-
-
-        /* ==============================
-           SHIFT WISE
-           ============================== */
-
-        let s1 = 0;
-        let s2 = 0;
-        let s3 = 0;
-
-
-        rows.forEach(
-            x => {
-
-                const s =
-                    String(
-                        x.Shift ||
-                        shiftFromDate(
-                            new Date(
-                                x.Update_at
-                            )
-                        )
-                    )
-                    .toUpperCase();
-
-
-                if(
-                    s.includes("SHIFT-1") ||
-                    s === "1"
-                ){
-
-                    s1++;
-
-                }
-                else if(
-                    s.includes("SHIFT-2") ||
-                    s === "2"
-                ){
-
-                    s2++;
-
-                }
-                else if(
-                    s.includes("SHIFT-3") ||
-                    s === "3"
-                ){
-
-                    s3++;
-
-                }
-
-            }
-        );
-
-
-        setText(
-            "s1",
-            s1
-        );
-
-        setText(
-            "s2",
-            s2
-        );
-
-        setText(
-            "s3",
-            s3
-        );
-
-
-        /* ==============================
-           LAST 10 RECORDS
-           ============================== */
-
-        const last10 =
-            rows
-            .slice(-10)
-            .reverse();
-
-
-        let html = "";
-
-
-        last10.forEach(
-            (x,i) => {
-
-                html += `
-
-                <tr>
-
-                    <td class="center">
-                        ${i+1}
-                    </td>
-
-                    <td class="center">
-                        ${x.Mould_count ?? "--"}
-                    </td>
-
-                    <td class="center">
-                        ${fmtTime(
-                            x.Update_at
-                        )}
-                    </td>
-
-                    <td class="center">
-                        ${x.Shift ?? "--"}
-                    </td>
-
-                    <td class="valid center">
-                        ${x.Status ?? "--"}
-                    </td>
-
-                </tr>
-
-                `;
-
-            }
-        );
-
-
-        document
-            .getElementById(
-                "records"
-            )
-            .innerHTML =
-            html;
-
-
-        /* ==============================
-           GRAPH
-           ============================== */
-
-        drawGraph(rows);
-
-    }
-
-    catch(error){
-
-        console.error(
-            "SCADA ERROR:",
-            error
-        );
-
-
-        setText(
-            "modbusStatus",
-            "SUPABASE : ERROR"
-        );
-
-    }
 
 }
 
@@ -1894,27 +1330,30 @@ async function refresh(){
 function drawGraph(rows){
 
     const start =
-        productionStart();
+    productionStart();
 
 
     const values =
-        new Array(24).fill(0);
+    new Array(24).fill(0);
 
 
     rows.forEach(
-        x => {
+        function(row){
 
             const t =
-                new Date(
-                    x.Update_at
-                );
+            normalizeCloudTime(
+                row.Update_at
+            );
 
 
             const index =
-                Math.floor(
-                    (t-start) /
-                    3600000
-                );
+            Math.floor(
+                (
+                    t.getTime() -
+                    start.getTime()
+                ) /
+                3600000
+            );
 
 
             if(
@@ -1931,78 +1370,642 @@ function drawGraph(rows){
 
 
     const max =
-        Math.max(
-            1,
-            ...values
-        );
+    Math.max(
+        1,
+        ...values
+    );
 
 
     let html = "";
 
 
     values.forEach(
-        (value,index) => {
+        function(value,index){
 
             const height =
-                Math.max(
-                    2,
-                    (value/max)*300
-                );
+            Math.max(
+                2,
+                (
+                    value /
+                    max
+                ) * 250
+            );
 
 
-            const d =
-                new Date(
-                    start.getTime() +
-                    index*3600000
-                );
+            const time =
+            new Date(
+                start.getTime() +
+                index *
+                3600000
+            );
 
 
             const label =
-                d.toLocaleTimeString(
-                    "en-IN",
-                    {
-                        hour:"2-digit",
-                        minute:"2-digit",
-                        hour12:false
-                    }
-                );
+            time.toLocaleTimeString(
+                "en-IN",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit",
+                    hour12:false
+                }
+            );
 
 
-            html += `
+            html +=
 
-            <div class="bar-wrap">
+            "<div class='bar-wrap'>" +
 
-                <div
-                    class="bar"
-                    style="
-                    height:${height}px">
-                </div>
+                "<div class='bar-value' " +
+                "style='bottom:" +
+                (height + 5) +
+                "px'>" +
 
-                <div
-                    class="bar-value"
-                    style="
-                    bottom:${height+2}px">
-                    ${value}
-                </div>
+                value +
 
-                <div class="bar-label">
-                    ${label}
-                </div>
+                "</div>" +
 
-            </div>
 
-            `;
+                "<div class='bar' " +
+                "style='height:" +
+                height +
+                "px'>" +
+
+                "</div>" +
+
+
+                "<div class='bar-label'>" +
+
+                label +
+
+                "</div>" +
+
+            "</div>";
 
         }
     );
 
 
     document
+    .getElementById(
+        "graph"
+    )
+    .innerHTML =
+    html;
+
+}
+
+
+/* =================================================
+   REFRESH DATA
+   ================================================= */
+
+async function refresh(){
+
+    try{
+
+        const url =
+        SUPABASE_URL +
+        "/rest/v1/" +
+        TABLE +
+
+        "?select=" +
+
+        "id," +
+        "Machine_name," +
+        "Mould_count," +
+        "Shift," +
+        "Status," +
+        "Update_at" +
+
+        "&order=Update_at.asc" +
+
+        "&limit=1000";
+
+
+        const response =
+        await fetch(
+            url,
+            {
+                method:"GET",
+
+                headers:{
+                    apikey:
+                    SUPABASE_KEY,
+
+                    Authorization:
+                    "Bearer " +
+                    SUPABASE_KEY
+                },
+
+                cache:
+                "no-store"
+            }
+        );
+
+
+        if(
+            !response.ok
+        ){
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+
+        }
+
+
+        const all =
+        await response.json();
+
+
+        document
         .getElementById(
-            "graph"
+            "supabaseStatus"
+        )
+        .textContent =
+        "SUPABASE : CONNECTED";
+
+
+        const start =
+        productionStart();
+
+
+        const rows =
+        all.filter(
+            function(row){
+
+                const t =
+                normalizeCloudTime(
+                    row.Update_at
+                );
+
+                return t >= start;
+
+            }
+        );
+
+
+        if(
+            rows.length === 0
+        ){
+
+            showNoData();
+
+            return;
+
+        }
+
+
+        /* ============================
+           LATEST
+           ============================ */
+
+        const latest =
+        rows[
+            rows.length - 1
+        ];
+
+
+        const latestTime =
+        normalizeCloudTime(
+            latest.Update_at
+        );
+
+
+        const total =
+        Number(
+            latest.Mould_count || 0
+        );
+
+
+        /* ============================
+           TOTAL
+           ============================ */
+
+        document
+        .getElementById(
+            "total"
+        )
+        .textContent =
+        total;
+
+
+        document
+        .getElementById(
+            "summaryTotal"
+        )
+        .textContent =
+        total;
+
+
+        /* ============================
+           MACHINE
+           ============================ */
+
+        document
+        .getElementById(
+            "machine"
+        )
+        .textContent =
+        latest.Machine_name ||
+        "--";
+
+
+        /* ============================
+           SHIFT
+           ============================ */
+
+        const currentShift =
+        latest.Shift ||
+        getShift(
+            latestTime
+        );
+
+
+        document
+        .getElementById(
+            "shift"
+        )
+        .textContent =
+        currentShift;
+
+
+        /* ============================
+           STATUS
+           ============================ */
+
+        const status =
+        latest.Status ||
+        "VALID";
+
+
+        document
+        .getElementById(
+            "scadaStatus"
+        )
+        .textContent =
+        "SCADA : " +
+        status;
+
+
+        document
+        .getElementById(
+            "summaryStatus"
+        )
+        .textContent =
+        status;
+
+
+        /* ============================
+           LAST MOULD
+           ============================ */
+
+        document
+        .getElementById(
+            "lastMould"
+        )
+        .textContent =
+        formatTime(
+            latest.Update_at
+        );
+
+
+        document
+        .getElementById(
+            "cloudUpdate"
+        )
+        .textContent =
+        formatDateTime(
+            latest.Update_at
+        );
+
+
+        /* ============================
+           CURRENT HOUR
+           ============================ */
+
+        const now =
+        new Date();
+
+
+        const hourStart =
+        new Date(now);
+
+
+        hourStart.setMinutes(
+            0,
+            0,
+            0
+        );
+
+
+        const currentHourRows =
+        rows.filter(
+            function(row){
+
+                const t =
+                normalizeCloudTime(
+                    row.Update_at
+                );
+
+                return t >= hourStart;
+
+            }
+        );
+
+
+        const thisHour =
+        currentHourRows.length;
+
+
+        document
+        .getElementById(
+            "thisHour"
+        )
+        .textContent =
+        thisHour;
+
+
+        document
+        .getElementById(
+            "summaryHour"
+        )
+        .textContent =
+        thisHour;
+
+
+        /* ============================
+           PREVIOUS HOUR
+           ============================ */
+
+        const previousStart =
+        new Date(
+            hourStart.getTime()
+            -
+            3600000
+        );
+
+
+        const previousRows =
+        rows.filter(
+            function(row){
+
+                const t =
+                normalizeCloudTime(
+                    row.Update_at
+                );
+
+
+                return(
+                    t >= previousStart &&
+                    t < hourStart
+                );
+
+            }
+        );
+
+
+        const previous =
+        previousRows.length;
+
+
+        document
+        .getElementById(
+            "previous"
+        )
+        .textContent =
+        previous;
+
+
+        document
+        .getElementById(
+            "summaryPrevious"
+        )
+        .textContent =
+        previous;
+
+
+        /* ============================
+           AVERAGE
+           ============================ */
+
+        const hours =
+        Math.max(
+            1,
+            (
+                now.getTime() -
+                start.getTime()
+            ) /
+            3600000
+        );
+
+
+        const average =
+        total /
+        hours;
+
+
+        document
+        .getElementById(
+            "average"
+        )
+        .textContent =
+        average.toFixed(1);
+
+
+        document
+        .getElementById(
+            "summaryAverage"
+        )
+        .textContent =
+        average.toFixed(1);
+
+
+        /* ============================
+           SENSOR
+           ============================ */
+
+        document
+        .getElementById(
+            "sensor"
+        )
+        .textContent =
+        "--";
+
+
+        document
+        .getElementById(
+            "voltage"
+        )
+        .textContent =
+        "-- V";
+
+
+        /* ============================
+           CYCLE
+           ============================ */
+
+        document
+        .getElementById(
+            "cycle"
+        )
+        .textContent =
+        "--";
+
+
+        /* ============================
+           LAST 10
+           ============================ */
+
+        const last10 =
+        rows
+        .slice(-10)
+        .reverse();
+
+
+        let html = "";
+
+
+        last10.forEach(
+            function(row,index){
+
+                html +=
+
+                "<tr>" +
+
+                "<td>" +
+                (index + 1) +
+                "</td>" +
+
+                "<td>" +
+                (
+                    row.Mould_count ??
+                    "--"
+                ) +
+                "</td>" +
+
+                "<td>" +
+                formatTime(
+                    row.Update_at
+                ) +
+                "</td>" +
+
+                "<td>" +
+                (
+                    row.Shift ??
+                    "--"
+                ) +
+                "</td>" +
+
+                "<td class='valid'>" +
+                (
+                    row.Status ??
+                    "--"
+                ) +
+                "</td>" +
+
+                "</tr>";
+
+            }
+        );
+
+
+        document
+        .getElementById(
+            "records"
         )
         .innerHTML =
         html;
+
+
+        /* ============================
+           GRAPH
+           ============================ */
+
+        drawGraph(
+            rows
+        );
+
+    }
+
+
+    catch(error){
+
+        console.error(
+            "SCADA ERROR:",
+            error
+        );
+
+
+        document
+        .getElementById(
+            "supabaseStatus"
+        )
+        .textContent =
+        "SUPABASE : ERROR";
+
+    }
+
+}
+
+
+/* =================================================
+   NO DATA
+   ================================================= */
+
+function showNoData(){
+
+    document
+    .getElementById(
+        "total"
+    )
+    .textContent =
+    "0";
+
+
+    document
+    .getElementById(
+        "thisHour"
+    )
+    .textContent =
+    "0";
+
+
+    document
+    .getElementById(
+        "previous"
+    )
+    .textContent =
+    "0";
+
+
+    document
+    .getElementById(
+        "average"
+    )
+    .textContent =
+    "0.0";
+
+
+    document
+    .getElementById(
+        "scadaStatus"
+    )
+    .textContent =
+    "SCADA : WAITING";
+
+
+    document
+    .getElementById(
+        "records"
+    )
+    .innerHTML =
+    "<tr>" +
+    "<td colspan='5'>" +
+    "No production data" +
+    "</td>" +
+    "</tr>";
 
 }
 
