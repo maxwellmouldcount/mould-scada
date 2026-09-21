@@ -165,6 +165,11 @@ table tbody td:nth-child(5)::before{content:"STATUS: ";color:#7f9097;font-size:1
 const SUPABASE_URL =
 "https://jdidxmwjuecedwmylcqc.supabase.co";
 
+/*
+  IMPORTANT:
+  Paste your existing SUPABASE publishable key here.
+  Do NOT use a secret/service_role key.
+*/
 const SUPABASE_KEY =
 "sb_publishable_nYuMBxR0GyXF3TQhjWvyRg_fdU82MnV";
 
@@ -173,149 +178,156 @@ const TABLE = "Mould_counter";
 
 /* ============================
    DATE / TIME
+   Production day = 08:30 AM to next day 08:30 AM
    ============================ */
 
-function localDateString(d){
+const IST_OPTIONS = {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+};
 
-    return d.getFullYear() +
-    "-" +
-    String(d.getMonth()+1).padStart(2,"0") +
-    "-" +
-    String(d.getDate()).padStart(2,"0");
+function istParts(d = new Date()){
+    const parts = new Intl.DateTimeFormat("en-CA", IST_OPTIONS).formatToParts(d);
+    const out = {};
+    parts.forEach(p => {
+        if(p.type !== "literal") out[p.type] = p.value;
+    });
+    return out;
+}
+
+function productionDate(d = new Date()){
+    const p = istParts(d);
+    const y = Number(p.year);
+    const m = Number(p.month);
+    const day = Number(p.day);
+    const hour = Number(p.hour);
+    const base = new Date(Date.UTC(y, m - 1, day));
+
+    // Before 08:30 belongs to the previous production date.
+    if(hour < 8 || (hour === 8 && Number(p.minute) < 30)){
+        base.setUTCDate(base.getUTCDate() - 1);
+    }
+
+    return base.getUTCFullYear() + "-" +
+           String(base.getUTCMonth() + 1).padStart(2,"0") + "-" +
+           String(base.getUTCDate()).padStart(2,"0");
+}
+
+function currentISTHour(){
+    return Number(istParts(new Date()).hour);
+}
+
+function currentISTMinute(){
+    return Number(istParts(new Date()).minute);
+}
+
+function shiftForTime(d = new Date()){
+    const p = istParts(d);
+    const mins = Number(p.hour) * 60 + Number(p.minute);
+
+    if(mins >= 510 && mins < 1050) return "SHIFT-1";  // 08:30-17:30
+    if(mins >= 1050 || mins < 60) return "SHIFT-2";   // 17:30-01:00
+    return "SHIFT-3";                                  // 01:00-08:30
 }
 
 
-/* =========================================
-   GET RECORD DATE / HOUR
-
-   New records:
-   Record_Date / Record_Hour
-
-   Old records:
-   calculate from Update_at in IST.
-   ========================================= */
+/* ============================
+   CLOUD RECORD DATE / HOUR
+   ============================ */
 
 function getRecordDate(row){
-
     if(
         row.Record_Date !== null &&
         row.Record_Date !== undefined &&
         String(row.Record_Date).trim() !== ""
     ){
-        return String(row.Record_Date);
+        return String(row.Record_Date).trim();
     }
 
-    const d =
-    new Date(row.Update_at);
+    const d = new Date(row.Update_at);
+    if(isNaN(d.getTime())) return "";
 
-    if(isNaN(d.getTime())){
-        return "";
-    }
+    const p = new Intl.DateTimeFormat("en-CA", {
+        timeZone:"Asia/Kolkata",
+        year:"numeric",
+        month:"2-digit",
+        day:"2-digit"
+    }).formatToParts(d);
 
-    return new Intl.DateTimeFormat(
-        "en-CA",
-        {
-            timeZone:"Asia/Kolkata",
-            year:"numeric",
-            month:"2-digit",
-            day:"2-digit"
-        }
-    ).format(d);
+    const obj = {};
+    p.forEach(x => {
+        if(x.type !== "literal") obj[x.type] = x.value;
+    });
+
+    return `${obj.year}-${obj.month}-${obj.day}`;
 }
 
-
 function getRecordHour(row){
-
     if(
         row.Record_Hour !== null &&
         row.Record_Hour !== undefined &&
         String(row.Record_Hour).trim() !== ""
     ){
-        const h =
-        Number(row.Record_Hour);
-
-        if(
-            Number.isInteger(h) &&
-            h >= 0 &&
-            h <= 23
-        ){
-            return h;
-        }
+        const h = Number(row.Record_Hour);
+        if(Number.isInteger(h) && h >= 0 && h <= 23) return h;
     }
 
-    const d =
-    new Date(row.Update_at);
-
-    if(isNaN(d.getTime())){
-        return -1;
-    }
+    const d = new Date(row.Update_at);
+    if(isNaN(d.getTime())) return -1;
 
     return Number(
-        new Intl.DateTimeFormat(
-            "en-IN",
-            {
-                timeZone:"Asia/Kolkata",
-                hour:"2-digit",
-                hourCycle:"h23"
-            }
-        ).format(d)
+        new Intl.DateTimeFormat("en-IN", {
+            timeZone:"Asia/Kolkata",
+            hour:"2-digit",
+            hourCycle:"h23"
+        }).format(d)
     );
 }
 
 function normalizeCloudTime(value){
-
     const d = new Date(value);
-
     return d;
 }
 
 function formatTime(value){
-
     const d = normalizeCloudTime(value);
+    if(isNaN(d.getTime())) return "--";
 
-    if(isNaN(d.getTime())){
-        return "--";
-    }
-
-    return d.toLocaleTimeString(
-        "en-IN",
-        {
-            hour:"2-digit",
-            minute:"2-digit",
-            second:"2-digit",
-            hour12:false
-        }
-    );
+    return d.toLocaleTimeString("en-IN", {
+        timeZone:"Asia/Kolkata",
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hour12:false
+    });
 }
 
 function formatDateTime(value){
-
     const d = normalizeCloudTime(value);
+    if(isNaN(d.getTime())) return "--";
 
-    if(isNaN(d.getTime())){
-        return "--";
-    }
-
-    return d.toLocaleString(
-        "en-IN",
-        {
-            day:"2-digit",
-            month:"2-digit",
-            year:"numeric",
-            hour:"2-digit",
-            minute:"2-digit",
-            second:"2-digit",
-            hour12:false
-        }
-    );
+    return d.toLocaleString("en-IN", {
+        timeZone:"Asia/Kolkata",
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hour12:false
+    });
 }
 
 function updateClock(){
-
     document.getElementById("clock").textContent =
-    new Date().toLocaleString(
-        "en-IN",
-        {
+        new Date().toLocaleString("en-IN", {
+            timeZone:"Asia/Kolkata",
             day:"2-digit",
             month:"2-digit",
             year:"numeric",
@@ -323,59 +335,32 @@ function updateClock(){
             minute:"2-digit",
             second:"2-digit",
             hour12:false
-        }
-    );
+        });
 }
 
 
 /* ============================
-   IMPORTANT DUPLICATE FILTER
-
-   PC CSV has one record per
-   Mould_count.
-
-   If same event was uploaded
-   twice to Supabase, keep only
-   one record.
+   DUPLICATE FILTER
    ============================ */
 
 function uniqueProductionRows(rows){
-
     const map = new Map();
 
-    rows.forEach(function(row){
+    rows.forEach(row => {
+        const date = getRecordDate(row);
+        const count = String(row.Mould_count ?? "");
 
-        const date =
-        String(row.Record_Date || "");
-
-        const count =
-        String(row.Mould_count ?? "");
-
-        if(
-            date !== "" &&
-            count !== ""
-        ){
-
-            const key =
-            date + "|" + count;
+        if(date !== "" && count !== ""){
+            const key = date + "|" + count;
 
             if(!map.has(key)){
-                map.set(key,row);
+                map.set(key, row);
             }
-
         }
-
     });
 
-    return Array.from(
-        map.values()
-    ).sort(
-        function(a,b){
-
-            return new Date(a.Update_at) -
-                   new Date(b.Update_at);
-
-        }
+    return Array.from(map.values()).sort(
+        (a,b) => new Date(a.Update_at) - new Date(b.Update_at)
     );
 }
 
@@ -385,71 +370,117 @@ function uniqueProductionRows(rows){
    ============================ */
 
 function drawGraph(rows){
+    const hourly = new Array(24).fill(0);
 
-    const hourly =
-    new Array(24).fill(0);
+    rows.forEach(row => {
+        const hour = getRecordHour(row);
 
-    rows.forEach(function(row){
-
-        const hour =
-        Number(row.Record_Hour);
-
-        if(
-            hour >= 0 &&
-            hour <= 23
-        ){
+        if(hour >= 0 && hour <= 23){
             hourly[hour]++;
         }
-
     });
 
-    const max =
-    Math.max(
-        1,
-        ...hourly
-    );
-
+    const max = Math.max(1, ...hourly);
     let html = "";
 
-    hourly.forEach(
-        function(value,index){
+    hourly.forEach((value,index) => {
+        const height = Math.max(2, (value / max) * 250);
+        const label = String(index).padStart(2,"0") + ":00";
 
-            const height =
-            Math.max(
-                2,
-                (value / max) * 250
-            );
-
-            const label =
-            String(index).padStart(2,"0") +
-            ":00";
-
-            html +=
+        html +=
             "<div class='bar-wrap'>" +
-
-            "<div class='bar-value' " +
-            "style='bottom:" +
-            (height + 5) +
-            "px'>" +
-            value +
-            "</div>" +
-
-            "<div class='bar' " +
-            "style='height:" +
-            height +
-            "px'></div>" +
-
-            "<div class='bar-label'>" +
-            label +
-            "</div>" +
-
+            "<div class='bar-value' style='bottom:" +
+            (height + 5) + "px'>" + value + "</div>" +
+            "<div class='bar' style='height:" +
+            height + "px'></div>" +
+            "<div class='bar-label'>" + label + "</div>" +
             "</div>";
+    });
 
-        }
-    );
+    document.getElementById("graph").innerHTML = html;
+}
 
-    document.getElementById("graph").innerHTML =
-    html;
+
+/* ============================
+   SUPABASE FETCH HELPERS
+   ============================ */
+
+/*
+  IMPORTANT FIX:
+  Old code downloaded only the first 1000 rows with
+  order=Update_at.asc. When the table became larger than
+  1000 rows, mobile's "latest" row was no longer the latest.
+
+  New code:
+  1. Fetch the latest cloud row separately.
+  2. Fetch current production-day rows separately.
+*/
+
+async function fetchLatestRow(){
+    const url =
+        SUPABASE_URL +
+        "/rest/v1/" +
+        TABLE +
+        "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
+        "&order=Update_at.desc" +
+        "&limit=1";
+
+    const response = await fetch(url, {
+        method:"GET",
+        headers:{
+            "apikey": SUPABASE_KEY,
+            "Authorization":"Bearer " + SUPABASE_KEY
+        },
+        cache:"no-store"
+    });
+
+    if(!response.ok){
+        throw new Error("Latest HTTP " + response.status);
+    }
+
+    const data = await response.json();
+    return Array.isArray(data) && data.length ? data[0] : null;
+}
+
+async function fetchProductionRows(prodDate){
+    /*
+      Prefer Record_Date because it is written by the PC SCADA.
+      Limit 5000 gives plenty of room for one production day.
+    */
+    const url =
+        SUPABASE_URL +
+        "/rest/v1/" +
+        TABLE +
+        "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
+        "&Record_Date=eq." +
+        encodeURIComponent(prodDate) +
+        "&order=Update_at.asc" +
+        "&limit=5000";
+
+    const response = await fetch(url, {
+        method:"GET",
+        headers:{
+            "apikey": SUPABASE_KEY,
+            "Authorization":"Bearer " + SUPABASE_KEY
+        },
+        cache:"no-store"
+    });
+
+    if(!response.ok){
+        throw new Error("Production HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    /*
+      If old rows do not have Record_Date, fall back to all cloud
+      rows only when necessary.
+    */
+    if(Array.isArray(data) && data.length > 0){
+        return data;
+    }
+
+    return [];
 }
 
 
@@ -458,324 +489,154 @@ function drawGraph(rows){
    ============================ */
 
 async function refresh(){
-
     try{
-
-        const url =
-        SUPABASE_URL +
-        "/rest/v1/" +
-        TABLE +
-
-        "?select=" +
-        "id," +
-        "Machine_name," +
-        "Mould_count," +
-        "Shift," +
-        "Status," +
-        "Update_at," +
-        "Record_Date," +
-        "Record_Hour" +
-
-        "&order=Update_at.asc" +
-        "&limit=1000";
-
-
-        const response =
-        await fetch(
-            url,
-            {
-                method:"GET",
-
-                headers:{
-                    "apikey":
-                    SUPABASE_KEY,
-
-                    "Authorization":
-                    "Bearer " +
-                    SUPABASE_KEY
-                },
-
-                cache:"no-store"
-            }
-        );
-
-
-        if(!response.ok){
-
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
+        if(
+            !SUPABASE_KEY ||
+            SUPABASE_KEY === "PASTE_YOUR_CURRENT_PUBLISHABLE_KEY_HERE"
+        ){
+            throw new Error("SUPABASE_KEY not entered");
         }
 
+        const latest = await fetchLatestRow();
 
-        const all =
-        await response.json();
+        document.getElementById("supabaseStatus").textContent =
+            "SUPABASE : CONNECTED";
 
-
-        document.getElementById(
-            "supabaseStatus"
-        ).textContent =
-        "SUPABASE : CONNECTED";
-
-
-        if(
-            !Array.isArray(all) ||
-            all.length === 0
-        ){
-
+        if(!latest){
             showNoData();
             return;
         }
 
-
-        /* Latest cloud row */
-        const latest =
-        all[all.length - 1];
-
-
         /*
-          PC total comes from Python
-          Mould_count production-day
-          total.
+          CURRENT PC COUNT:
+          Always use the newest cloud record, not the 1000th row.
         */
+        const total = Number(latest.Mould_count || 0);
 
-        const total =
-        Number(
-            latest.Mould_count || 0
+        document.getElementById("total").textContent = total;
+        document.getElementById("summaryTotal").textContent = total;
+
+        const now = new Date();
+        const prodDate = productionDate(now);
+        const rows = uniqueProductionRows(
+            await fetchProductionRows(prodDate)
         );
-
-
-        document.getElementById("total").textContent =
-        total;
-
-        document.getElementById("summaryTotal").textContent =
-        total;
-
-
-        /* Today's PC records */
-
-        const now =
-        new Date();
-
-        const todayDate =
-        localDateString(now);
-
-
-        /*
-          IMPORTANT:
-          First filter today.
-          Then remove duplicate cloud
-          uploads using Date + Mould_count.
-        */
-
-        const rows =
-        uniqueProductionRows(
-            all.filter(
-                function(row){
-
-                    return String(
-                        row.Record_Date || ""
-                    ) === todayDate;
-
-                }
-            )
-        );
-
-
-        /* Machine */
 
         document.getElementById("machine").textContent =
-        latest.Machine_name || "--";
+            latest.Machine_name || "--";
 
+        /*
+          Current shift must follow the live IST clock.
+          Do not use the shift value from an old cloud row.
+        */
+        const currentShift = shiftForTime(now);
+        document.getElementById("shift").textContent = currentShift;
 
-        /* Shift */
-
-        document.getElementById("shift").textContent =
-        latest.Shift || "--";
-
-
-        /* Status */
-
-        const status =
-        latest.Status || "VALID";
+        const status = latest.Status || "VALID";
 
         document.getElementById("scadaStatus").textContent =
-        "SCADA : " + status;
+            "SCADA : " + status;
 
-        document.getElementById("summaryStatus").textContent =
-        status;
+        document.getElementById("summaryStatus").textContent = status;
 
-
-        /* Last mould */
-
+        /*
+          Last mould = latest cloud record time.
+        */
         document.getElementById("lastMould").textContent =
-        formatTime(latest.Update_at);
+            formatTime(latest.Update_at);
 
         document.getElementById("cloudUpdate").textContent =
-        formatDateTime(latest.Update_at);
-
+            formatDateTime(latest.Update_at);
 
         /* Current hour */
+        const currentHour = currentISTHour();
 
-        const currentHour =
-        now.getHours();
-
-
-        const thisHour =
-        rows.filter(
-            function(row){
-
-                return Number(
-                    row.Record_Hour
-                ) === currentHour;
-
-            }
+        const thisHour = rows.filter(row =>
+            getRecordHour(row) === currentHour
         ).length;
 
-
-        document.getElementById("thisHour").textContent =
-        thisHour;
-
-        document.getElementById("summaryHour").textContent =
-        thisHour;
-
+        document.getElementById("thisHour").textContent = thisHour;
+        document.getElementById("summaryHour").textContent = thisHour;
 
         /* Previous hour */
-
-        const previousHour =
-        currentHour - 1;
-
+        const previousHour = currentHour - 1;
 
         const previous =
-        previousHour >= 0
+            previousHour >= 0
+            ? rows.filter(row =>
+                getRecordHour(row) === previousHour
+              ).length
+            : 0;
 
-        ?
+        document.getElementById("previous").textContent = previous;
+        document.getElementById("summaryPrevious").textContent = previous;
 
-        rows.filter(
-            function(row){
+        /*
+          Average based on production-day elapsed hours.
+          Minimum 1 hour.
+        */
+        const p = istParts(now);
+        const startMinutes = 8 * 60 + 30;
+        const nowMinutes =
+            Number(p.hour) * 60 + Number(p.minute);
 
-                return Number(
-                    row.Record_Hour
-                ) === previousHour;
+        let elapsedHours;
 
-            }
-        ).length
+        if(nowMinutes >= startMinutes){
+            elapsedHours =
+                (nowMinutes - startMinutes) / 60;
+        }else{
+            elapsedHours =
+                (24 * 60 - startMinutes + nowMinutes) / 60;
+        }
 
-        :
+        elapsedHours = Math.max(1, elapsedHours);
 
-        0;
-
-
-        document.getElementById("previous").textContent =
-        previous;
-
-        document.getElementById("summaryPrevious").textContent =
-        previous;
-
-
-        /* Average exactly like PC */
-
-        const average =
-        total / 24;
-
+        const average = total / elapsedHours;
 
         document.getElementById("average").textContent =
-        average.toFixed(1);
+            average.toFixed(1);
 
         document.getElementById("summaryAverage").textContent =
-        average.toFixed(1);
+            average.toFixed(1);
 
+        /* Sensor / cycle are not stored in current cloud table */
+        document.getElementById("sensor").textContent = "--";
+        document.getElementById("voltage").textContent = "-- V";
+        document.getElementById("cycle").textContent = "--";
 
-        /* Sensor / cycle are not stored in cloud table */
-
-        document.getElementById("sensor").textContent =
-        "--";
-
-        document.getElementById("voltage").textContent =
-        "-- V";
-
-        document.getElementById("cycle").textContent =
-        "--";
-
-
-        /* Last 10 current-day production records */
-
-        const last10 =
-        rows.slice(-10).reverse();
-
+        /* Last 10 current production-day records */
+        const last10 = rows.slice(-10).reverse();
 
         let recordsHTML = "";
 
-
-        last10.forEach(
-            function(row,index){
-
-                recordsHTML +=
-
+        last10.forEach((row,index) => {
+            recordsHTML +=
                 "<tr>" +
-
-                "<td>" +
-                (index + 1) +
-                "</td>" +
-
-                "<td>" +
-                (
-                    row.Mould_count ??
-                    "--"
-                ) +
-                "</td>" +
-
-                "<td>" +
-                formatTime(
-                    row.Update_at
-                ) +
-                "</td>" +
-
-                "<td>" +
-                (
-                    row.Shift ??
-                    "--"
-                ) +
-                "</td>" +
-
-                "<td class='valid'>" +
-                (
-                    row.Status ??
-                    "--"
-                ) +
-                "</td>" +
-
+                "<td>" + (index + 1) + "</td>" +
+                "<td>" + (row.Mould_count ?? "--") + "</td>" +
+                "<td>" + formatTime(row.Update_at) + "</td>" +
+                "<td>" + (row.Shift ?? "--") + "</td>" +
+                "<td class='valid'>" + (row.Status ?? "--") + "</td>" +
                 "</tr>";
+        });
 
-            }
-        );
+        if(!recordsHTML){
+            recordsHTML =
+                "<tr><td colspan='5'>No production data</td></tr>";
+        }
 
-
-        document.getElementById("records").innerHTML =
-        recordsHTML;
-
+        document.getElementById("records").innerHTML = recordsHTML;
 
         /* Graph */
-
         drawGraph(rows);
 
+    }catch(error){
+        console.error("SCADA ERROR:", error);
+
+        document.getElementById("supabaseStatus").textContent =
+            "SUPABASE : ERROR";
     }
-
-
-    catch(error){
-
-        console.error(
-            "SCADA ERROR:",
-            error
-        );
-
-        document.getElementById(
-            "supabaseStatus"
-        ).textContent =
-        "SUPABASE : ERROR";
-    }
-
 }
 
 
@@ -784,38 +645,18 @@ async function refresh(){
    ============================ */
 
 function showNoData(){
-
-    document.getElementById("total").textContent =
-    "0";
-
-    document.getElementById("summaryTotal").textContent =
-    "0";
-
-    document.getElementById("thisHour").textContent =
-    "0";
-
-    document.getElementById("summaryHour").textContent =
-    "0";
-
-    document.getElementById("previous").textContent =
-    "0";
-
-    document.getElementById("summaryPrevious").textContent =
-    "0";
-
-    document.getElementById("average").textContent =
-    "0.0";
-
-    document.getElementById("summaryAverage").textContent =
-    "0.0";
-
+    document.getElementById("total").textContent = "0";
+    document.getElementById("summaryTotal").textContent = "0";
+    document.getElementById("thisHour").textContent = "0";
+    document.getElementById("summaryHour").textContent = "0";
+    document.getElementById("previous").textContent = "0";
+    document.getElementById("summaryPrevious").textContent = "0";
+    document.getElementById("average").textContent = "0.0";
+    document.getElementById("summaryAverage").textContent = "0.0";
     document.getElementById("scadaStatus").textContent =
-    "SCADA : WAITING";
-
+        "SCADA : WAITING";
     document.getElementById("records").innerHTML =
-    "<tr>" +
-    "<td colspan='5'>No production data</td>" +
-    "</tr>";
+        "<tr><td colspan='5'>No production data</td></tr>";
 }
 
 
@@ -824,18 +665,10 @@ function showNoData(){
    ============================ */
 
 updateClock();
-
 refresh();
 
-setInterval(
-    updateClock,
-    1000
-);
-
-setInterval(
-    refresh,
-    2000
-);
+setInterval(updateClock, 1000);
+setInterval(refresh, 2000);
 
 </script>
 
