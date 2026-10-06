@@ -1,3 +1,4 @@
+```
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -269,6 +270,7 @@ function getRecordDate(row){
 }
 
 function getRecordHour(row){
+    // Prefer the hour written by the PC SCADA.
     if(
         row.Record_Hour !== null &&
         row.Record_Hour !== undefined &&
@@ -278,16 +280,20 @@ function getRecordHour(row){
         if(Number.isInteger(h) && h >= 0 && h <= 23) return h;
     }
 
+    // Fallback: calculate the hour from Update_at in IST.
     const d = new Date(row.Update_at);
     if(isNaN(d.getTime())) return -1;
 
-    return Number(
-        new Intl.DateTimeFormat("en-IN", {
-            timeZone:"Asia/Kolkata",
-            hour:"2-digit",
-            hourCycle:"h23"
-        }).format(d)
-    );
+    const parts = new Intl.DateTimeFormat("en-IN", {
+        timeZone:"Asia/Kolkata",
+        hour:"2-digit",
+        hourCycle:"h23"
+    }).formatToParts(d);
+
+    const hourPart = parts.find(p => p.type === "hour");
+    const h = hourPart ? Number(hourPart.value) : -1;
+
+    return Number.isInteger(h) && h >= 0 && h <= 23 ? h : -1;
 }
 
 function normalizeCloudTime(value){
@@ -374,7 +380,6 @@ function drawGraph(rows){
 
     rows.forEach(row => {
         const hour = getRecordHour(row);
-
         if(hour >= 0 && hour <= 23){
             hourly[hour]++;
         }
@@ -384,7 +389,10 @@ function drawGraph(rows){
     let html = "";
 
     hourly.forEach((value,index) => {
-        const height = Math.max(2, (value / max) * 250);
+        const height = value > 0
+            ? Math.max(4, (value / max) * 250)
+            : 2;
+
         const label = String(index).padStart(2,"0") + ":00";
 
         html +=
@@ -423,7 +431,8 @@ async function fetchLatestRow(){
         TABLE +
         "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
         "&order=Update_at.desc" +
-        "&limit=1";
+        "&limit=1" +
+        "&_t=" + Date.now();
 
     const response = await fetch(url, {
         method:"GET",
@@ -455,7 +464,8 @@ async function fetchProductionRows(prodDate){
         "&Record_Date=eq." +
         encodeURIComponent(prodDate) +
         "&order=Update_at.asc" +
-        "&limit=5000";
+        "&limit=5000" +
+        "&_t=" + Date.now();
 
     const response = await fetch(url, {
         method:"GET",
@@ -488,7 +498,16 @@ async function fetchProductionRows(prodDate){
    REFRESH
    ============================ */
 
+let refreshBusy = false;
+let refreshSequence = 0;
+
 async function refresh(){
+    // Prevent overlapping 2-second requests from overwriting newer graph data.
+    if(refreshBusy) return;
+
+    refreshBusy = true;
+    const mySequence = ++refreshSequence;
+
     try{
         if(
             !SUPABASE_KEY ||
@@ -497,7 +516,15 @@ async function refresh(){
             throw new Error("SUPABASE_KEY not entered");
         }
 
-        const latest = await fetchLatestRow();
+        const now = new Date();
+        const prodDate = productionDate(now);
+
+        const [latest, productionRows] = await Promise.all([
+            fetchLatestRow(),
+            fetchProductionRows(prodDate)
+        ]);
+
+        if(mySequence !== refreshSequence) return;
 
         document.getElementById("supabaseStatus").textContent =
             "SUPABASE : CONNECTED";
@@ -507,28 +534,18 @@ async function refresh(){
             return;
         }
 
-        /*
-          CURRENT PC COUNT:
-          Always use the newest cloud record, not the 1000th row.
-        */
         const total = Number(latest.Mould_count || 0);
 
         document.getElementById("total").textContent = total;
         document.getElementById("summaryTotal").textContent = total;
 
-        const now = new Date();
-        const prodDate = productionDate(now);
         const rows = uniqueProductionRows(
-            await fetchProductionRows(prodDate)
+            Array.isArray(productionRows) ? productionRows : []
         );
 
         document.getElementById("machine").textContent =
             latest.Machine_name || "--";
 
-        /*
-          Current shift must follow the live IST clock.
-          Do not use the shift value from an old cloud row.
-        */
         const currentShift = shiftForTime(now);
         document.getElementById("shift").textContent = currentShift;
 
@@ -536,19 +553,13 @@ async function refresh(){
 
         document.getElementById("scadaStatus").textContent =
             "SCADA : " + status;
-
         document.getElementById("summaryStatus").textContent = status;
 
-        /*
-          Last mould = latest cloud record time.
-        */
         document.getElementById("lastMould").textContent =
             formatTime(latest.Update_at);
-
         document.getElementById("cloudUpdate").textContent =
             formatDateTime(latest.Update_at);
 
-        /* Current hour */
         const currentHour = currentISTHour();
 
         const thisHour = rows.filter(row =>
@@ -558,23 +569,16 @@ async function refresh(){
         document.getElementById("thisHour").textContent = thisHour;
         document.getElementById("summaryHour").textContent = thisHour;
 
-        /* Previous hour */
-        const previousHour = currentHour - 1;
+        // Correct previous hour even at 00:00.
+        const previousHour = (currentHour + 23) % 24;
 
-        const previous =
-            previousHour >= 0
-            ? rows.filter(row =>
-                getRecordHour(row) === previousHour
-              ).length
-            : 0;
+        const previous = rows.filter(row =>
+            getRecordHour(row) === previousHour
+        ).length;
 
         document.getElementById("previous").textContent = previous;
         document.getElementById("summaryPrevious").textContent = previous;
 
-        /*
-          Average based on production-day elapsed hours.
-          Minimum 1 hour.
-        */
         const p = istParts(now);
         const startMinutes = 8 * 60 + 30;
         const nowMinutes =
@@ -596,16 +600,13 @@ async function refresh(){
 
         document.getElementById("average").textContent =
             average.toFixed(1);
-
         document.getElementById("summaryAverage").textContent =
             average.toFixed(1);
 
-        /* Sensor / cycle are not stored in current cloud table */
         document.getElementById("sensor").textContent = "--";
         document.getElementById("voltage").textContent = "-- V";
         document.getElementById("cycle").textContent = "--";
 
-        /* Last 10 current production-day records */
         const last10 = rows.slice(-10).reverse();
 
         let recordsHTML = "";
@@ -628,14 +629,15 @@ async function refresh(){
 
         document.getElementById("records").innerHTML = recordsHTML;
 
-        /* Graph */
+        // Fresh complete 24-hour graph every successful refresh.
         drawGraph(rows);
 
     }catch(error){
         console.error("SCADA ERROR:", error);
-
         document.getElementById("supabaseStatus").textContent =
             "SUPABASE : ERROR";
+    }finally{
+        refreshBusy = false;
     }
 }
 
@@ -674,3 +676,4 @@ setInterval(refresh, 2000);
 
 </body>
 </html>
+```
