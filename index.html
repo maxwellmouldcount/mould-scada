@@ -431,8 +431,7 @@ async function fetchLatestRow(){
         TABLE +
         "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
         "&order=Update_at.desc" +
-        "&limit=1" +
-        "&_t=" + Date.now();
+        "&limit=1";
 
     const response = await fetch(url, {
         method:"GET",
@@ -464,8 +463,7 @@ async function fetchProductionRows(prodDate){
         "&Record_Date=eq." +
         encodeURIComponent(prodDate) +
         "&order=Update_at.asc" +
-        "&limit=5000" +
-        "&_t=" + Date.now();
+        "&limit=5000";
 
     const response = await fetch(url, {
         method:"GET",
