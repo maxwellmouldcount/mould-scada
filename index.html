@@ -450,18 +450,43 @@ async function fetchLatestRow(){
     return Array.isArray(data) && data.length ? data[0] : null;
 }
 
+function productionWindowUTC(prodDate){
+    // prodDate is the production-day date in IST.
+    // Production day runs 08:30 IST to next day 08:30 IST.
+    const [y,m,d] = prodDate.split("-").map(Number);
+
+    const startMs = Date.UTC(y, m - 1, d, 8, 30, 0) - (5.5 * 60 * 60 * 1000);
+    const endDate = new Date(Date.UTC(y, m - 1, d));
+    endDate.setUTCDate(endDate.getUTCDate() + 1);
+    const endMs = endDate.getTime() + (8 * 60 + 30) * 60 * 1000 - (5.5 * 60 * 60 * 1000);
+
+    return {
+        start: new Date(startMs).toISOString(),
+        end: new Date(endMs).toISOString()
+    };
+}
+
 async function fetchProductionRows(prodDate){
     /*
-      Prefer Record_Date because it is written by the PC SCADA.
-      Limit 5000 gives plenty of room for one production day.
+      IMPORTANT:
+      Do NOT filter the mobile graph by Record_Date.
+      The PC production-day label can represent the shift cycle's
+      ending calendar date, while Update_at contains the real event time.
+
+      Mobile graph must therefore use the actual cloud timestamp:
+      08:30 IST -> next day 08:30 IST.
     */
+    const window = productionWindowUTC(prodDate);
+
     const url =
         SUPABASE_URL +
         "/rest/v1/" +
         TABLE +
         "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
-        "&Record_Date=eq." +
-        encodeURIComponent(prodDate) +
+        "&Update_at=gte." +
+        encodeURIComponent(window.start) +
+        "&Update_at=lt." +
+        encodeURIComponent(window.end) +
         "&order=Update_at.asc" +
         "&limit=5000";
 
@@ -479,16 +504,7 @@ async function fetchProductionRows(prodDate){
     }
 
     const data = await response.json();
-
-    /*
-      If old rows do not have Record_Date, fall back to all cloud
-      rows only when necessary.
-    */
-    if(Array.isArray(data) && data.length > 0){
-        return data;
-    }
-
-    return [];
+    return Array.isArray(data) ? data : [];
 }
 
 
@@ -538,7 +554,12 @@ async function refresh(){
         document.getElementById("summaryTotal").textContent = total;
 
         const rows = uniqueProductionRows(
-            Array.isArray(productionRows) ? productionRows : []
+            (Array.isArray(productionRows) ? productionRows : []).filter(row => {
+                const d = new Date(row.Update_at);
+                if(isNaN(d.getTime())) return false;
+                const w = productionWindowUTC(prodDate);
+                return d >= new Date(w.start) && d < new Date(w.end);
+            })
         );
 
         document.getElementById("machine").textContent =
