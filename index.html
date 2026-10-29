@@ -270,30 +270,28 @@ function getRecordDate(row){
 }
 
 function getRecordHour(row){
-    // Prefer the hour written by the PC SCADA.
-    if(
-        row.Record_Hour !== null &&
-        row.Record_Hour !== undefined &&
-        String(row.Record_Hour).trim() !== ""
-    ){
-        const h = Number(row.Record_Hour);
-        if(Number.isInteger(h) && h >= 0 && h <= 23) return h;
+    // Use the actual cloud event timestamp first. Record_Hour may be stale
+    // or written using a different PC timezone, especially around midnight.
+    const d = new Date(row.Update_at);
+    if(!isNaN(d.getTime())){
+        const parts = new Intl.DateTimeFormat("en-IN", {
+            timeZone:"Asia/Kolkata",
+            hour:"2-digit",
+            hourCycle:"h23"
+        }).formatToParts(d);
+
+        const hourPart = parts.find(p => p.type === "hour");
+        const hourFromTimestamp = hourPart ? Number(hourPart.value) : -1;
+        if(Number.isInteger(hourFromTimestamp) && hourFromTimestamp >= 0 && hourFromTimestamp <= 23){
+            return hourFromTimestamp;
+        }
     }
 
-    // Fallback: calculate the hour from Update_at in IST.
-    const d = new Date(row.Update_at);
-    if(isNaN(d.getTime())) return -1;
-
-    const parts = new Intl.DateTimeFormat("en-IN", {
-        timeZone:"Asia/Kolkata",
-        hour:"2-digit",
-        hourCycle:"h23"
-    }).formatToParts(d);
-
-    const hourPart = parts.find(p => p.type === "hour");
-    const h = hourPart ? Number(hourPart.value) : -1;
-
-    return Number.isInteger(h) && h >= 0 && h <= 23 ? h : -1;
+    // Only fall back to the stored hour if the timestamp is missing/invalid.
+    const storedHour = Number(row.Record_Hour);
+    return Number.isInteger(storedHour) && storedHour >= 0 && storedHour <= 23
+        ? storedHour
+        : -1;
 }
 
 function normalizeCloudTime(value){
@@ -355,13 +353,16 @@ function uniqueProductionRows(rows){
     rows.forEach(row => {
         const date = getRecordDate(row);
         const count = String(row.Mould_count ?? "");
+        const id = row.id !== null && row.id !== undefined
+            ? String(row.id).trim()
+            : "";
 
-        if(date !== "" && count !== ""){
-            const key = date + "|" + count;
+        // Database IDs are the safest deduplication key. Older rows without
+        // IDs retain the previous date + mould-count fallback.
+        const key = id !== "" ? "id:" + id : (date !== "" && count !== "" ? date + "|" + count : "");
 
-            if(!map.has(key)){
-                map.set(key, row);
-            }
+        if(key !== "" && !map.has(key)){
+            map.set(key, row);
         }
     });
 
