@@ -351,14 +351,18 @@ function uniqueProductionRows(rows){
 
     rows.forEach(row => {
         const date = getRecordDate(row);
-        const count = String(row.Mould_count ?? "");
+        const count = String(row.Mould_count ?? "").trim();
         const id = row.id !== null && row.id !== undefined
             ? String(row.id).trim()
             : "";
+        const machine = String(row.Machine_name || "").trim();
 
-        // Database IDs are the safest deduplication key. Older rows without
-        // IDs retain the previous date + mould-count fallback.
-        const key = id !== "" ? "id:" + id : (date !== "" && count !== "" ? date + "|" + count : "");
+        // PC writes Mould_count as the monthly running sequence.
+        // Use that sequence to collapse duplicate cloud uploads, even when
+        // duplicate rows have different Supabase IDs.
+        const key = count !== "" && /^\d+$/.test(count)
+            ? "seq:" + machine + "|" + count
+            : (id !== "" ? "id:" + id : (date !== "" ? date + "|" + count : ""));
 
         if(key !== "" && !map.has(key)){
             map.set(key, row);
@@ -467,30 +471,50 @@ function productionWindowUTC(prodDate){
 }
 
 async function fetchProductionRows(prodDate){
-    /*
-      IMPORTANT:
-      Do NOT filter the mobile graph by Record_Date.
-      The PC production-day label can represent the shift cycle's
-      ending calendar date, while Update_at contains the real event time.
-
-      Mobile graph must therefore use the actual cloud timestamp:
-      08:30 IST -> next day 08:30 IST.
-    */
     const window = productionWindowUTC(prodDate);
-
-    const url =
+    const baseUrl =
         SUPABASE_URL +
         "/rest/v1/" +
         TABLE +
         "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
-        // Use one PostgREST AND expression for both bounds on the same column.
-        // Repeating Update_at query parameters can cause one bound to be ignored.
         "&and=" + encodeURIComponent(
             "(Update_at.gte." + window.start + ",Update_at.lt." + window.end + ")"
         ) +
-        "&order=Update_at.asc" +
-        "&limit=1000";
+        "&order=Update_at.asc";
 
+    // Supabase commonly caps a response at 1000 rows. Fetch every page so
+    // graph/hourly data is not silently truncated at exactly 1000.
+    const allRows = [];
+    const pageSize = 1000;
+    for(let offset = 0; offset < 100000; offset += pageSize){
+        const response = await fetch(baseUrl, {
+            method:"GET",
+            headers:{
+                "apikey": SUPABASE_KEY,
+                "Authorization":"Bearer " + SUPABASE_KEY,
+                "Range-Unit":"items",
+                "Range": offset + "-" + (offset + pageSize - 1)
+            },
+            cache:"no-store"
+        });
+        if(!response.ok) throw new Error("Production HTTP " + response.status);
+        const page = await response.json();
+        if(!Array.isArray(page) || page.length === 0) break;
+        allRows.push(...page);
+        if(page.length < pageSize) break;
+    }
+    return allRows;
+}
+
+async function fetchPreviousProductionRow(prodDate){
+    // The PC's Mould_count field is the monthly cumulative sequence.
+    // The last sequence before 08:30 is the baseline for today's delta.
+    const window = productionWindowUTC(prodDate);
+    const url =
+        SUPABASE_URL + "/rest/v1/" + TABLE +
+        "?select=id,Machine_name,Mould_count,Update_at" +
+        "&Update_at=lt." + encodeURIComponent(window.start) +
+        "&order=Update_at.desc&limit=1";
     const response = await fetch(url, {
         method:"GET",
         headers:{
@@ -499,13 +523,9 @@ async function fetchProductionRows(prodDate){
         },
         cache:"no-store"
     });
-
-    if(!response.ok){
-        throw new Error("Production HTTP " + response.status);
-    }
-
+    if(!response.ok) throw new Error("Baseline HTTP " + response.status);
     const data = await response.json();
-    return Array.isArray(data) ? data : [];
+    return Array.isArray(data) && data.length ? data[0] : null;
 }
 
 
@@ -534,9 +554,10 @@ async function refresh(){
         const now = new Date();
         const prodDate = productionDate(now);
 
-        const [latest, productionRows] = await Promise.all([
+        const [latest, productionRows, previousProductionRow] = await Promise.all([
             fetchLatestRow(),
-            fetchProductionRows(prodDate)
+            fetchProductionRows(prodDate),
+            fetchPreviousProductionRow(prodDate)
         ]);
 
         if(mySequence !== refreshSequence) return;
@@ -560,7 +581,22 @@ async function refresh(){
             })
         );
 
-        const total = rows.length;
+        // Match the PC calculation: today's count is the difference between
+        // the latest monthly sequence and the last sequence before 08:30 IST.
+        // Fall back to unique event rows only if the sequence is unavailable.
+        const latestSequence = Number(latest.Mould_count);
+        const previousSequence = Number(previousProductionRow?.Mould_count);
+        let total = rows.length;
+        const latestTime = new Date(latest.Update_at);
+        const productionBounds = productionWindowUTC(prodDate);
+        const latestIsInProductionDay = !isNaN(latestTime.getTime()) &&
+            latestTime >= new Date(productionBounds.start) &&
+            latestTime < new Date(productionBounds.end);
+        if(latestIsInProductionDay && Number.isFinite(latestSequence) &&
+           Number.isFinite(previousSequence) && latest.Mould_count !== null &&
+           previousProductionRow?.Mould_count !== null && latestSequence >= previousSequence){
+            total = latestSequence - previousSequence;
+        }
         document.getElementById("total").textContent = total;
         document.getElementById("summaryTotal").textContent = total;
 
