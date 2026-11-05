@@ -1,4 +1,3 @@
-```
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,9 +78,9 @@ table tbody td:nth-child(5)::before{content:"STATUS: ";color:#7f9097;font-size:1
 <div class="cards">
 
 <div class="card">
-<div class="card-title">TOTAL MOULD COUNT</div>
+<div class="card-title">TODAY TOTAL MOULD COUNT</div>
 <div class="big green" id="total">0</div>
-<div class="small">CURRENT PC COUNT</div>
+<div class="small">CURRENT PRODUCTION DAY</div>
 </div>
 
 <div class="card">
@@ -146,7 +145,7 @@ table tbody td:nth-child(5)::before{content:"STATUS: ";color:#7f9097;font-size:1
 <div class="summary">
 <div class="section-title">PRODUCTION SUMMARY</div>
 <div class="summary-row"><span>Machine</span><span class="summary-value" id="machine">--</span></div>
-<div class="summary-row"><span>Current PC Count</span><span class="summary-value" id="summaryTotal">0</span></div>
+<div class="summary-row"><span>Today Total</span><span class="summary-value" id="summaryTotal">0</span></div>
 <div class="summary-row"><span>Current Hour</span><span class="summary-value" id="summaryHour">0</span></div>
 <div class="summary-row"><span>Previous Hour</span><span class="summary-value" id="summaryPrevious">0</span></div>
 <div class="summary-row"><span>Average / Hour</span><span class="summary-value" id="summaryAverage">0.0</span></div>
@@ -549,11 +548,8 @@ async function refresh(){
             return;
         }
 
-        const total = Number(latest.Mould_count || 0);
-
-        document.getElementById("total").textContent = total;
-        document.getElementById("summaryTotal").textContent = total;
-
+        // Count records in the current 08:30-to-08:30 production day.
+        // Mould_count is the running mould serial/counter value, not today's total.
         const rows = uniqueProductionRows(
             (Array.isArray(productionRows) ? productionRows : []).filter(row => {
                 const d = new Date(row.Update_at);
@@ -562,6 +558,10 @@ async function refresh(){
                 return d >= new Date(w.start) && d < new Date(w.end);
             })
         );
+
+        const total = rows.length;
+        document.getElementById("total").textContent = total;
+        document.getElementById("summaryTotal").textContent = total;
 
         document.getElementById("machine").textContent =
             latest.Machine_name || "--";
@@ -696,4 +696,3 @@ setInterval(refresh, 2000);
 
 </body>
 </html>
-```
