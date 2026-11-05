@@ -350,18 +350,13 @@ function uniqueProductionRows(rows){
     const map = new Map();
 
     rows.forEach(row => {
-        const sequence = String(row.Mould_count ?? "").trim();
-        const timestamp = new Date(row.Update_at);
-        if(isNaN(timestamp.getTime())) return;
+        const d = new Date(row.Update_at);
+        if(isNaN(d.getTime())) return;
 
-        // PC's Mould_count is the monthly running mould serial number.
-        // Cloud retries can create multiple rows for the same mould event
-        // with slightly different timestamps. Deduplicate by that serial.
-        // Use timestamp only when the serial is unavailable/non-numeric.
-        const key = /^\d+$/.test(sequence)
-            ? "seq:" + sequence
-            : "time:" + String(timestamp.getTime());
-
+        // PC CSV records one event per mould timestamp. Use that same event
+        // identity in Cloud; do not deduplicate by Mould_count because it is
+        // a monthly sequence and may be populated differently by backfill.
+        const key = String(d.getTime());
         if(!map.has(key)) map.set(key, row);
     });
 
@@ -577,8 +572,8 @@ async function refresh(){
         );
 
         // Match PC update_production(): today_total_count = len(today).
-        // Mould_count is used only as a unique event/serial key, not as a
-        // daily total. The same unique rows drive the graph and total.
+        // Mould_count is a monthly running serial, NOT today's production total.
+        // Count unique cloud mould-event timestamps inside the production window.
         const total = rows.length;
         document.getElementById("total").textContent = total;
         document.getElementById("summaryTotal").textContent = total;
