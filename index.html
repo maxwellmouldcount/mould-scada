@@ -231,8 +231,8 @@ function shiftForTime(d = new Date()){
     const p = istParts(d);
     const mins = Number(p.hour) * 60 + Number(p.minute);
 
-    if(mins >= 510 && mins < 1050) return "SHIFT-1";  // 08:30-17:30
-    if(mins >= 1050 || mins < 60) return "SHIFT-2";   // 17:30-01:00
+    if(mins >= 510 && mins < 1020) return "SHIFT-1";  // 08:30-17:00
+    if(mins >= 1020 || mins < 60) return "SHIFT-2";   // 17:00-01:00
     return "SHIFT-3";                                  // 01:00-08:30
 }
 
@@ -350,23 +350,14 @@ function uniqueProductionRows(rows){
     const map = new Map();
 
     rows.forEach(row => {
-        const date = getRecordDate(row);
-        const count = String(row.Mould_count ?? "").trim();
-        const id = row.id !== null && row.id !== undefined
-            ? String(row.id).trim()
-            : "";
-        const machine = String(row.Machine_name || "").trim();
+        const d = new Date(row.Update_at);
+        if(isNaN(d.getTime())) return;
 
-        // PC writes Mould_count as the monthly running sequence.
-        // Use that sequence to collapse duplicate cloud uploads, even when
-        // duplicate rows have different Supabase IDs.
-        const key = count !== "" && /^\d+$/.test(count)
-            ? "seq:" + machine + "|" + count
-            : (id !== "" ? "id:" + id : (date !== "" ? date + "|" + count : ""));
-
-        if(key !== "" && !map.has(key)){
-            map.set(key, row);
-        }
+        // PC CSV records one event per mould timestamp. Use that same event
+        // identity in Cloud; do not deduplicate by Mould_count because it is
+        // a monthly sequence and may be populated differently by backfill.
+        const key = String(d.getTime());
+        if(!map.has(key)) map.set(key, row);
     });
 
     return Array.from(map.values()).sort(
@@ -554,10 +545,9 @@ async function refresh(){
         const now = new Date();
         const prodDate = productionDate(now);
 
-        const [latest, productionRows, previousProductionRow] = await Promise.all([
+        const [latest, productionRows] = await Promise.all([
             fetchLatestRow(),
-            fetchProductionRows(prodDate),
-            fetchPreviousProductionRow(prodDate)
+            fetchProductionRows(prodDate)
         ]);
 
         if(mySequence !== refreshSequence) return;
@@ -581,22 +571,10 @@ async function refresh(){
             })
         );
 
-        // Match the PC calculation: today's count is the difference between
-        // the latest monthly sequence and the last sequence before 08:30 IST.
-        // Fall back to unique event rows only if the sequence is unavailable.
-        const latestSequence = Number(latest.Mould_count);
-        const previousSequence = Number(previousProductionRow?.Mould_count);
-        let total = rows.length;
-        const latestTime = new Date(latest.Update_at);
-        const productionBounds = productionWindowUTC(prodDate);
-        const latestIsInProductionDay = !isNaN(latestTime.getTime()) &&
-            latestTime >= new Date(productionBounds.start) &&
-            latestTime < new Date(productionBounds.end);
-        if(latestIsInProductionDay && Number.isFinite(latestSequence) &&
-           Number.isFinite(previousSequence) && latest.Mould_count !== null &&
-           previousProductionRow?.Mould_count !== null && latestSequence >= previousSequence){
-            total = latestSequence - previousSequence;
-        }
+        // Match PC update_production(): today_total_count = len(today).
+        // Mould_count is a monthly running serial, NOT today's production total.
+        // Count unique cloud mould-event timestamps inside the production window.
+        const total = rows.length;
         document.getElementById("total").textContent = total;
         document.getElementById("summaryTotal").textContent = total;
 
