@@ -483,12 +483,13 @@ async function fetchProductionRows(prodDate){
         "/rest/v1/" +
         TABLE +
         "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
-        "&Update_at=gte." +
-        encodeURIComponent(window.start) +
-        "&Update_at=lt." +
-        encodeURIComponent(window.end) +
+        // Use one PostgREST AND expression for both bounds on the same column.
+        // Repeating Update_at query parameters can cause one bound to be ignored.
+        "&and=" + encodeURIComponent(
+            "(Update_at.gte." + window.start + ",Update_at.lt." + window.end + ")"
+        ) +
         "&order=Update_at.asc" +
-        "&limit=5000";
+        "&limit=1000";
 
     const response = await fetch(url, {
         method:"GET",
