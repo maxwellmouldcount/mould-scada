@@ -12,8 +12,8 @@ body{overflow-x:hidden}
 .header{text-align:center;padding:12px 5px;border-bottom:2px solid #18dfff}
 .title{color:#18dfff;font-size:28px;font-weight:bold}
 .subtitle{color:#8d9aa0;font-size:14px;margin-top:5px}
-.status-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.status-box{background:#050d11;border:1px solid #2b3b43;border-radius:12px;padding:15px 5px;text-align:center;font-size:17px;font-weight:bold}
+.status-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.status-box{background:#050d11;border:1px solid #2b3b43;border-radius:12px;padding:12px 4px;text-align:center;font-size:15px;font-weight:bold}
 .connected{color:#00ff42}.running{color:#ffe500}
 .clock{background:#050d11;border:1px solid #2b3b43;border-radius:12px;text-align:center;color:#ffe500;font-size:23px;font-weight:bold;padding:13px;margin-top:10px}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
@@ -40,21 +40,23 @@ td{border:1px solid #34444c;padding:8px 5px;text-align:center;white-space:nowrap
 .footer{text-align:center;color:#707d82;font-size:12px;padding:18px 5px}
 @media(max-width:600px){
 .page{padding:7px}.title{font-size:23px}.subtitle{font-size:11px}
-.status-box{font-size:14px;padding:13px 4px}.clock{font-size:20px}
+.status-box{font-size:11px;padding:11px 2px}.clock{font-size:20px}
 .card{min-height:115px;padding:14px 5px}.card-title{font-size:13px}.big{font-size:34px}
 .table-container{overflow:visible}table{min-width:0;width:100%;table-layout:auto}
 table thead{display:none}table tbody{display:block}
-table tbody tr{display:grid;grid-template-columns:42px 1fr 1fr;grid-template-areas:"no count time" "no shift status";margin-bottom:8px;border:1px solid #34444c;border-radius:8px;overflow:hidden;background:#071116}
+table tbody tr{display:grid;grid-template-columns:42px 1fr 1fr;grid-template-areas:"no count time" "no cycle shift" "no status status";margin-bottom:8px;border:1px solid #34444c;border-radius:8px;overflow:hidden;background:#071116}
 table tbody td{border:0;border-bottom:1px solid #24343b;padding:8px 5px;font-size:12px;white-space:normal}
 table tbody td:nth-child(1){grid-area:no;grid-row:1 / span 2;display:flex;align-items:center;justify-content:center;border-right:1px solid #34444c;border-bottom:0;color:#18dfff;font-weight:bold}
 table tbody td:nth-child(2){grid-area:count;text-align:left}
 table tbody td:nth-child(2)::before{content:"MOULD COUNT: ";color:#7f9097;font-size:10px}
 table tbody td:nth-child(3){grid-area:time;text-align:right}
 table tbody td:nth-child(3)::before{content:"TIME: ";color:#7f9097;font-size:10px}
-table tbody td:nth-child(4){grid-area:shift;text-align:left;border-bottom:0}
-table tbody td:nth-child(4)::before{content:"SHIFT: ";color:#7f9097;font-size:10px}
-table tbody td:nth-child(5){grid-area:status;text-align:right;border-bottom:0}
-table tbody td:nth-child(5)::before{content:"STATUS: ";color:#7f9097;font-size:10px}
+table tbody td:nth-child(4){grid-area:cycle;text-align:left}
+table tbody td:nth-child(4)::before{content:"CYCLE: ";color:#7f9097;font-size:10px}
+table tbody td:nth-child(5){grid-area:shift;text-align:right}
+table tbody td:nth-child(5)::before{content:"SHIFT: ";color:#7f9097;font-size:10px}
+table tbody td:nth-child(6){grid-area:status;text-align:right;border-bottom:0}
+table tbody td:nth-child(6)::before{content:"STATUS: ";color:#7f9097;font-size:10px}
 .graph{height:300px}
 }
 @media(max-width:380px){.title{font-size:20px}.card-title{font-size:12px}.big{font-size:31px}}
@@ -69,8 +71,9 @@ table tbody td:nth-child(5)::before{content:"STATUS: ";color:#7f9097;font-size:1
 </div>
 
 <div class="status-row">
+<div class="status-box connected" id="scadaStatus">SCADA : WAITING</div>
+<div class="status-box connected" id="modbusStatus">MODBUS : CLOUD STATUS</div>
 <div class="status-box connected" id="supabaseStatus">SUPABASE : CONNECTING</div>
-<div class="status-box running" id="scadaStatus">SCADA : WAITING</div>
 </div>
 
 <div class="clock" id="clock">--</div>
@@ -132,11 +135,19 @@ table tbody td:nth-child(5)::before{content:"STATUS: ";color:#7f9097;font-size:1
 <div class="graph" id="graph"></div>
 </div>
 
+<div class="summary">
+<div class="section-title">SHIFT WISE COUNT</div>
+<div class="summary-row"><span>SHIFT-1 (08:30 AM - 05:00 PM)</span><span class="summary-value" id="shift1Count">0</span></div>
+<div class="summary-row"><span>SHIFT-2 (05:00 PM - 01:00 AM)</span><span class="summary-value" id="shift2Count">0</span></div>
+<div class="summary-row"><span>SHIFT-3 (01:00 AM - 08:30 AM)</span><span class="summary-value" id="shift3Count">0</span></div>
+<div class="summary-row"><span>3 SHIFT TOTAL</span><span class="summary-value" id="shiftTotal">0</span></div>
+</div>
+
 <div class="records-panel">
 <div class="section-title">LAST 10 MOULD RECORDS</div>
 <div class="table-container">
 <table>
-<thead><tr><th>No.</th><th>MOULD COUNT</th><th>MOULD TIME</th><th>SHIFT</th><th>STATUS</th></tr></thead>
+<thead><tr><th>No.</th><th>MOULD COUNT</th><th>MOULD TIME</th><th>CYCLE SEC</th><th>SHIFT</th><th>STATUS</th></tr></thead>
 <tbody id="records"><tr><td colspan="5">Waiting...</td></tr></tbody>
 </table>
 </div>
@@ -231,8 +242,8 @@ function shiftForTime(d = new Date()){
     const p = istParts(d);
     const mins = Number(p.hour) * 60 + Number(p.minute);
 
-    if(mins >= 510 && mins < 1050) return "SHIFT-1";  // 08:30-17:30
-    if(mins >= 1050 || mins < 60) return "SHIFT-2";   // 17:30-01:00
+    if(mins >= 510 && mins < 1020) return "SHIFT-1";  // 08:30-17:00
+    if(mins >= 1020 || mins < 60) return "SHIFT-2";   // 17:00-01:00
     return "SHIFT-3";                                  // 01:00-08:30
 }
 
@@ -350,23 +361,17 @@ function uniqueProductionRows(rows){
     const map = new Map();
 
     rows.forEach(row => {
-        const date = getRecordDate(row);
-        const count = String(row.Mould_count ?? "").trim();
-        const id = row.id !== null && row.id !== undefined
-            ? String(row.id).trim()
-            : "";
-        const machine = String(row.Machine_name || "").trim();
+        const timestamp = new Date(row.Update_at);
+        if(isNaN(timestamp.getTime())) return;
 
-        // PC writes Mould_count as the monthly running sequence.
-        // Use that sequence to collapse duplicate cloud uploads, even when
-        // duplicate rows have different Supabase IDs.
-        const key = count !== "" && /^\d+$/.test(count)
-            ? "seq:" + machine + "|" + count
-            : (id !== "" ? "id:" + id : (date !== "" ? date + "|" + count : ""));
+        // The PC writes the same CSV mould event to Supabase during live
+        // upload and may later backfill it with a different Mould_count value.
+        // Therefore Mould_count is NOT a safe duplicate key.
+        // PC CSV event time has one-second precision: deduplicate by IST event
+        // timestamp rounded to the nearest second, independent of sequence.
+        const key = "event:" + Math.floor(timestamp.getTime() / 1000);
 
-        if(key !== "" && !map.has(key)){
-            map.set(key, row);
-        }
+        if(!map.has(key)) map.set(key, row);
     });
 
     return Array.from(map.values()).sort(
@@ -433,7 +438,7 @@ async function fetchLatestRow(){
         SUPABASE_URL +
         "/rest/v1/" +
         TABLE +
-        "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
+        "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour,Cycle_Time_sec,AI1_Voltage" +
         "&order=Update_at.desc" +
         "&limit=1";
 
@@ -476,7 +481,7 @@ async function fetchProductionRows(prodDate){
         SUPABASE_URL +
         "/rest/v1/" +
         TABLE +
-        "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour" +
+        "?select=id,Machine_name,Mould_count,Shift,Status,Update_at,Record_Date,Record_Hour,Cycle_Time_sec,AI1_Voltage" +
         "&and=" + encodeURIComponent(
             "(Update_at.gte." + window.start + ",Update_at.lt." + window.end + ")"
         ) +
@@ -554,10 +559,9 @@ async function refresh(){
         const now = new Date();
         const prodDate = productionDate(now);
 
-        const [latest, productionRows, previousProductionRow] = await Promise.all([
+        const [latest, productionRows] = await Promise.all([
             fetchLatestRow(),
-            fetchProductionRows(prodDate),
-            fetchPreviousProductionRow(prodDate)
+            fetchProductionRows(prodDate)
         ]);
 
         if(mySequence !== refreshSequence) return;
@@ -581,22 +585,11 @@ async function refresh(){
             })
         );
 
-        // Match the PC calculation: today's count is the difference between
-        // the latest monthly sequence and the last sequence before 08:30 IST.
-        // Fall back to unique event rows only if the sequence is unavailable.
-        const latestSequence = Number(latest.Mould_count);
-        const previousSequence = Number(previousProductionRow?.Mould_count);
-        let total = rows.length;
-        const latestTime = new Date(latest.Update_at);
-        const productionBounds = productionWindowUTC(prodDate);
-        const latestIsInProductionDay = !isNaN(latestTime.getTime()) &&
-            latestTime >= new Date(productionBounds.start) &&
-            latestTime < new Date(productionBounds.end);
-        if(latestIsInProductionDay && Number.isFinite(latestSequence) &&
-           Number.isFinite(previousSequence) && latest.Mould_count !== null &&
-           previousProductionRow?.Mould_count !== null && latestSequence >= previousSequence){
-            total = latestSequence - previousSequence;
-        }
+        // Match PC update_production(): today_total_count = len(today).
+        // Cloud rows are deduplicated by event timestamp because live uploads
+        // and CSV backfills can carry different Mould_count sequence values.
+        // The same unique rows drive the graph and total.
+        const total = rows.length;
         document.getElementById("total").textContent = total;
         document.getElementById("summaryTotal").textContent = total;
 
@@ -660,9 +653,36 @@ async function refresh(){
         document.getElementById("summaryAverage").textContent =
             average.toFixed(1);
 
-        document.getElementById("sensor").textContent = "--";
-        document.getElementById("voltage").textContent = "-- V";
-        document.getElementById("cycle").textContent = "--";
+        // Live analog and cycle values are stored on each mould event.
+        const voltage = Number(latest.AI1_Voltage);
+        if(latest.AI1_Voltage !== null && latest.AI1_Voltage !== undefined && Number.isFinite(voltage)){
+            document.getElementById("voltage").textContent = voltage.toFixed(2) + " V";
+            document.getElementById("sensor").textContent = voltage >= 2.5 ? "ON" : "OFF";
+            document.getElementById("sensor").style.color = voltage >= 2.5 ? "#00ff42" : "#18dfff";
+        }else{
+            document.getElementById("sensor").textContent = "--";
+            document.getElementById("voltage").textContent = "-- V";
+        }
+        const cycleValue = Number(latest.Cycle_Time_sec);
+        document.getElementById("cycle").textContent =
+            latest.Cycle_Time_sec !== null && latest.Cycle_Time_sec !== undefined && Number.isFinite(cycleValue)
+                ? Math.round(cycleValue) + " SEC" : "--";
+
+        // Shift totals use the shift saved with each event in Supabase.
+        const shift1 = rows.filter(r => String(r.Shift || "").toUpperCase() === "SHIFT-1").length;
+        const shift2 = rows.filter(r => String(r.Shift || "").toUpperCase() === "SHIFT-2").length;
+        const shift3 = rows.filter(r => String(r.Shift || "").toUpperCase() === "SHIFT-3").length;
+        document.getElementById("shift1Count").textContent = shift1;
+        document.getElementById("shift2Count").textContent = shift2;
+        document.getElementById("shift3Count").textContent = shift3;
+        document.getElementById("shiftTotal").textContent = shift1 + shift2 + shift3;
+
+        // Cloud cannot directly read the Modbus port state. Show freshness,
+        // not an unverified MODBUS CONNECTED claim.
+        const ageSeconds = Math.max(0, (Date.now() - new Date(latest.Update_at).getTime()) / 1000);
+        document.getElementById("modbusStatus").textContent =
+            ageSeconds <= 15 ? "SCADA DATA : LIVE" : "SCADA DATA : STALE";
+        document.getElementById("modbusStatus").style.color = ageSeconds <= 15 ? "#00ff42" : "#ffe500";
 
         const last10 = rows.slice(-10).reverse();
 
@@ -674,6 +694,7 @@ async function refresh(){
                 "<td>" + (index + 1) + "</td>" +
                 "<td>" + (row.Mould_count ?? "--") + "</td>" +
                 "<td>" + formatTime(row.Update_at) + "</td>" +
+                "<td>" + (row.Cycle_Time_sec ?? "--") + "</td>" +
                 "<td>" + (row.Shift ?? "--") + "</td>" +
                 "<td class='valid'>" + (row.Status ?? "--") + "</td>" +
                 "</tr>";
@@ -681,7 +702,7 @@ async function refresh(){
 
         if(!recordsHTML){
             recordsHTML =
-                "<tr><td colspan='5'>No production data</td></tr>";
+                "<tr><td colspan='6'>No production data</td></tr>";
         }
 
         document.getElementById("records").innerHTML = recordsHTML;
@@ -715,7 +736,7 @@ function showNoData(){
     document.getElementById("scadaStatus").textContent =
         "SCADA : WAITING";
     document.getElementById("records").innerHTML =
-        "<tr><td colspan='5'>No production data</td></tr>";
+        "<tr><td colspan='6'>No production data</td></tr>";
 }
 
 
